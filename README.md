@@ -1,24 +1,57 @@
-# README
+# List App
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+This is a short description of your app.
 
-Things you may want to cover:
+## Getting Started
 
-* Ruby version
+### Requirements
 
-* System dependencies
+1. Ruby
+1. PostgreSQL (e.g. [Postgres.app][postgres-app])
 
-* Configuration
+### Setup
 
-* Database creation
+```sh
+$ bundle install
+$ rails db:setup
+```
 
-* Database initialization
+### Development
 
-* How to run the test suite
+To generate models, resources, and controllers:
 
-* Services (job queues, cache servers, search engines, etc.)
+```bash
+$ rails generate model widget [fields]
+$ rails generate jsonapi:resource widget
+$ rails generate jsonapi:controller widget
+```
 
-* Deployment instructions
+### Testing
 
-* ...
+```sh
+$ bin/rspec
+```
+
+In request tests, you can use the user and access token factories to create test data to access protected resources:
+
+```ruby
+user = FactoryBot.create(:user)
+token = FactoryBot.create(:access_token, resource_owner_id: user.id).token
+headers = {
+  'Authorization' => "Bearer #{token}",
+  'Content-Type' => 'application/vnd.api+json',
+}
+
+# assuming you have a Widget model that belongs to a User
+FactoryBot.create(:widget, user: user)
+
+get '/widgets', headers: headers
+```
+
+### Running
+
+```sh
+$ rails server
+```
+
+[postgres-app]: http://postgresapp.com
