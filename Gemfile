@@ -20,3 +20,7 @@ end
 group :development do
 end
 
+gem "rack-cors"
+gem "jsonapi-resources"
+gem "bcrypt"
+gem "doorkeeper"
