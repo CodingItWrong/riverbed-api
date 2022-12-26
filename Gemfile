@@ -24,3 +24,14 @@ gem "rack-cors"
 gem "jsonapi-resources"
 gem "bcrypt"
 gem "doorkeeper"
+
+group :development do
+  gem "bullet"
+  gem "dotenv-rails"
+end
+
+group :development, :test do
+  gem "rspec-rails"
+  gem "coderay"
+  gem "standard"
+end
