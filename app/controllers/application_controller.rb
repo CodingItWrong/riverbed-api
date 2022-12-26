@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 class ApplicationController < ActionController::Base
   include JSONAPI::ActsAsResourceController
   skip_before_action :verify_authenticity_token
@@ -6,7 +7,7 @@ class ApplicationController < ActionController::Base
   private
 
   def context
-    { current_user: current_user }
+    {current_user: current_user}
   end
 
   def current_user
