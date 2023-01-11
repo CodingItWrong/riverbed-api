@@ -2,8 +2,8 @@
 
 User.create!(email: "example@example.com", password: "password")
 
-Field.create!(name: "title")
-Field.create!(name: "publisher")
+Field.create!(name: "title", show_in_summary: true)
+Field.create!(name: "publisher", show_in_summary: false)
 
 Card.create!(field_values: {
   "title" => "Final Fantasy 7",

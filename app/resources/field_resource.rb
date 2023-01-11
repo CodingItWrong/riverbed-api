@@ -1,3 +1,3 @@
 class FieldResource < ApplicationResource
-  attribute :name
+  attributes :name, :show_in_summary
 end
