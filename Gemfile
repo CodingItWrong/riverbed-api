@@ -4,7 +4,7 @@ ruby "3.2.0"
 
 gem "rails", "~> 7.0.4"
 gem "pg", "~> 1.1"
-gem "puma", "~> 5.0"
+gem "puma"
 gem "rack-cors"
 gem "jsonapi-resources"
 gem "bcrypt"
