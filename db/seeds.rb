@@ -14,3 +14,10 @@ Card.create!(field_values: {
   "title" => "Castlevania: Symphony of the Night",
   "publisher" => "Konami"
 })
+
+20.times do |i|
+  Card.create!(field_values: {
+    "title" => "Movie #{i + 1}",
+    "publisher" => "Disney"
+  })
+end
