@@ -2,22 +2,26 @@
 
 User.create!(email: "example@example.com", password: "password")
 
-Field.create!(name: "title", show_in_summary: true)
-Field.create!(name: "publisher", show_in_summary: false)
+Field.create!(name: "Title", data_type: :text, show_in_summary: true)
+Field.create!(name: "Publisher", data_type: :text, show_in_summary: false)
+Field.create!(name: "Released At", data_type: :datetime, show_in_summary: false)
 
 Card.create!(field_values: {
-  "title" => "Final Fantasy 7",
-  "publisher" => "Square Enix"
+  "Title" => "Final Fantasy 7",
+  "Publisher" => "Square Enix",
+  "Released At" => "1997-01-31".in_time_zone
 })
 
 Card.create!(field_values: {
-  "title" => "Castlevania: Symphony of the Night",
-  "publisher" => "Konami"
+  "Title" => "Castlevania: Symphony of the Night",
+  "Publisher" => "Konami",
+  "Released At" => "1997-03-20".in_time_zone
 })
 
 20.times do |i|
   Card.create!(field_values: {
-    "title" => "Movie #{i + 1}",
-    "publisher" => "Disney"
+    "Title" => "Game #{i + 1}",
+    "Publisher" => "EA",
+    "Released At" => Time.zone.now + 1.year
   })
 end
