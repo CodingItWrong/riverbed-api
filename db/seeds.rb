@@ -2,8 +2,8 @@
 
 User.create!(email: "example@example.com", password: "password")
 
-Field.create!(name: "Title", data_type: :text, show_in_summary: true)
-Field.create!(name: "Publisher", data_type: :text, show_in_summary: false)
+title = Field.create!(name: "Title", data_type: :text, show_in_summary: true)
+publisher = Field.create!(name: "Publisher", data_type: :text, show_in_summary: false)
 released_at = Field.create!(name: "Released At", data_type: :date, show_in_summary: true)
 
 Column.create!(name: "Released", filter: {
@@ -16,21 +16,21 @@ Column.create!(name: "Unreleased", filter: {
 })
 
 Card.create!(field_values: {
-  "Title" => "Final Fantasy 7",
-  "Publisher" => "Square Enix",
-  "Released At" => "1997-01-31"
+  title.id.to_s => "Final Fantasy 7",
+  publisher.id.to_s => "Square Enix",
+  released_at.id.to_s => "1997-01-31"
 })
 
 Card.create!(field_values: {
-  "Title" => "Castlevania: Symphony of the Night",
-  "Publisher" => "Konami",
-  "Released At" => "1997-03-20"
+  title.id.to_s => "Castlevania: Symphony of the Night",
+  publisher.id.to_s => "Konami",
+  released_at.id.to_s => "1997-03-20"
 })
 
 20.times do |i|
   Card.create!(field_values: {
-    "Title" => "Game #{i + 1}",
-    "Publisher" => "EA",
-    "Released At" => "2025-01-01"
+    title.id.to_s => "Game #{i + 1}",
+    publisher.id.to_s => "EA",
+    released_at.id.to_s => "2025-01-01"
   })
 end
