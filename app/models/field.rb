@@ -1,5 +1,5 @@
 class Field < ApplicationRecord
   enum :data_type,
     text: 0,
-    datetime: 1
+    date: 1
 end
