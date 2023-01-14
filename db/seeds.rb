@@ -4,7 +4,16 @@ User.create!(email: "example@example.com", password: "password")
 
 Field.create!(name: "Title", data_type: :text, show_in_summary: true)
 Field.create!(name: "Publisher", data_type: :text, show_in_summary: false)
-Field.create!(name: "Released At", data_type: :date, show_in_summary: true)
+released_at = Field.create!(name: "Released At", data_type: :date, show_in_summary: true)
+
+Column.create!(name: "Released", filter: {
+  function: "IS_EMPTY",
+  field: released_at.id.to_s
+})
+Column.create!(name: "Unreleased", filter: {
+  function: "IS_NOT_EMPTY",
+  field: released_at.id.to_s
+})
 
 Card.create!(field_values: {
   "Title" => "Final Fantasy 7",
