@@ -5,6 +5,6 @@ Rails.application.routes.draw do
 
   jsonapi_resources :cards, only: %w[index create update destroy]
   jsonapi_resources :columns, only: %w[index]
-  jsonapi_resources :fields, only: %w[index]
+  jsonapi_resources :elements, only: %w[index]
   jsonapi_resources :users, only: %w[create]
 end

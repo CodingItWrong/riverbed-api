@@ -2,9 +2,24 @@
 
 User.create!(email: "example@example.com", password: "password")
 
-title = Field.create!(name: "Title", data_type: :text, show_in_summary: true)
-publisher = Field.create!(name: "Publisher", data_type: :text, show_in_summary: false)
-released_at = Field.create!(name: "Released At", data_type: :date, show_in_summary: true)
+title = Element.create!(
+  name: "Title",
+  element_type: :field,
+  data_type: :text,
+  show_in_summary: true
+)
+publisher = Element.create!(
+  name: "Publisher",
+  element_type: :field,
+  data_type: :text,
+  show_in_summary: false
+)
+released_at = Element.create!(
+  name: "Released At",
+  element_type: :field,
+  data_type: :date,
+  show_in_summary: true
+)
 
 Column.create!(name: "Released", filter: {
   function: "IS_EMPTY",
