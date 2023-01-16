@@ -20,6 +20,16 @@ released_at = Element.create!(
   data_type: :date,
   show_in_summary: true
 )
+Element.create!(
+  name: "Release",
+  element_type: :button,
+  show_in_summary: false,
+  action: {
+    command: "SET_VALUE",
+    field: released_at.id.to_s,
+    value: "NOW"
+  }
+)
 
 Column.create!(name: "Released", filter: {
   function: "IS_EMPTY",
