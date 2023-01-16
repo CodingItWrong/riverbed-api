@@ -8,5 +8,5 @@ class Element < ApplicationRecord
     date: 1
 
   validates :name, presence: true
-  validates :data_type, presence: true
+  validates :element_type, presence: true
 end
