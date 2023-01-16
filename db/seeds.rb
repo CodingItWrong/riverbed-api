@@ -55,7 +55,6 @@ Card.create!(field_values: {
 20.times do |i|
   Card.create!(field_values: {
     title.id.to_s => "Game #{i + 1}",
-    publisher.id.to_s => "EA",
-    released_at.id.to_s => "2025-01-01"
+    publisher.id.to_s => "EA"
   })
 end
