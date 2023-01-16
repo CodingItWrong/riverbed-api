@@ -32,11 +32,11 @@ Element.create!(
 )
 
 Column.create!(name: "Released", filter: {
-  function: "IS_EMPTY",
+  function: "IS_NOT_EMPTY",
   field: released_at.id.to_s
 })
 Column.create!(name: "Unreleased", filter: {
-  function: "IS_NOT_EMPTY",
+  function: "IS_EMPTY",
   field: released_at.id.to_s
 })
 
