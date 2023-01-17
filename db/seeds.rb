@@ -18,7 +18,8 @@ released_at = Element.create!(
   name: "Released At",
   element_type: :field,
   data_type: :date,
-  show_in_summary: true
+  show_in_summary: true,
+  read_only: true
 )
 Element.create!(
   name: "Release",

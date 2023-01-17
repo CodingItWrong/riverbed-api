@@ -3,5 +3,6 @@ class ElementResource < ApplicationResource
     :element_type,
     :data_type,
     :show_in_summary,
+    :read_only,
     :action
 end
