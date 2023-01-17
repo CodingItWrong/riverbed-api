@@ -3,18 +3,21 @@
 User.create!(email: "example@example.com", password: "password")
 
 title = Element.create!(
+  display_order: 0,
   name: "Title",
   element_type: :field,
   data_type: :text,
   show_in_summary: true
 )
 publisher = Element.create!(
+  display_order: 1,
   name: "Publisher",
   element_type: :field,
   data_type: :text,
   show_in_summary: false
 )
 released_at = Element.create!(
+  display_order: 3,
   name: "Released At",
   element_type: :field,
   data_type: :date,
@@ -22,6 +25,7 @@ released_at = Element.create!(
   read_only: true
 )
 Element.create!(
+  display_order: 4,
   name: "Release",
   element_type: :button,
   show_in_summary: false,
@@ -36,6 +40,7 @@ Element.create!(
   }
 )
 Element.create!(
+  display_order: 5,
   name: "Unrelease",
   element_type: :button,
   show_in_summary: false,
