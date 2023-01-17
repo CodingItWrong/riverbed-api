@@ -30,6 +30,16 @@ Element.create!(
     value: "NOW"
   }
 )
+Element.create!(
+  name: "Unrelease",
+  element_type: :button,
+  show_in_summary: false,
+  action: {
+    command: "SET_VALUE",
+    field: released_at.id.to_s,
+    value: "EMPTY"
+  }
+)
 
 Column.create!(name: "Released", filter: {
   function: "IS_NOT_EMPTY",
