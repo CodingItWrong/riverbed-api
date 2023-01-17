@@ -29,6 +29,10 @@ Element.create!(
     command: "SET_VALUE",
     field: released_at.id.to_s,
     value: "NOW"
+  },
+  show_condition: {
+    query: "IS_EMPTY",
+    field: released_at.id.to_s
   }
 )
 Element.create!(
@@ -39,6 +43,10 @@ Element.create!(
     command: "SET_VALUE",
     field: released_at.id.to_s,
     value: "EMPTY"
+  },
+  show_condition: {
+    query: "IS_NOT_EMPTY",
+    field: released_at.id.to_s
   }
 )
 

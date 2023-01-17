@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_01_17_123637) do
+ActiveRecord::Schema[7.0].define(version: 2023_01_17_124348) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -36,6 +36,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_01_17_123637) do
     t.integer "element_type", null: false
     t.jsonb "action"
     t.boolean "read_only", default: false, null: false
+    t.jsonb "show_condition"
   end
 
   create_table "oauth_access_grants", force: :cascade do |t|
