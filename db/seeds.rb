@@ -42,12 +42,12 @@ Element.create!(
   }
 )
 
-Column.create!(name: "Released", filter: {
-  function: "IS_NOT_EMPTY",
+Column.create!(name: "Released", card_inclusion_condition: {
+  query: "IS_NOT_EMPTY",
   field: released_at.id.to_s
 })
-Column.create!(name: "Unreleased", filter: {
-  function: "IS_EMPTY",
+Column.create!(name: "Unreleased", card_inclusion_condition: {
+  query: "IS_EMPTY",
   field: released_at.id.to_s
 })
 

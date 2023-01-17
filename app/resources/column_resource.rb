@@ -1,3 +1,3 @@
 class ColumnResource < ApplicationResource
-  attributes :name, :filter
+  attributes :name, :card_inclusion_condition
 end
