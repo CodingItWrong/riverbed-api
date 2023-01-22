@@ -69,7 +69,7 @@ GEM
     ast (2.4.2)
     bcrypt (3.1.18)
     builder (3.2.4)
-    bullet (7.0.4)
+    bullet (7.0.7)
       activesupport (>= 3.0.0)
       uniform_notifier (~> 1.11)
     coderay (1.1.3)
