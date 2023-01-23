@@ -1,4 +1,6 @@
 class Element < ApplicationRecord
+  belongs_to :board
+
   enum :element_type,
     field: 0,
     button: 1

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_01_23_112007) do
+ActiveRecord::Schema[7.0].define(version: 2023_01_23_113922) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -24,6 +24,8 @@ ActiveRecord::Schema[7.0].define(version: 2023_01_23_112007) do
     t.jsonb "field_values", default: {}, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "board_id", null: false
+    t.index ["board_id"], name: "index_cards_on_board_id"
   end
 
   create_table "columns", force: :cascade do |t|
@@ -31,6 +33,8 @@ ActiveRecord::Schema[7.0].define(version: 2023_01_23_112007) do
     t.jsonb "card_inclusion_condition", default: {}, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "board_id", null: false
+    t.index ["board_id"], name: "index_columns_on_board_id"
   end
 
   create_table "elements", force: :cascade do |t|
@@ -44,6 +48,8 @@ ActiveRecord::Schema[7.0].define(version: 2023_01_23_112007) do
     t.boolean "read_only", default: false, null: false
     t.jsonb "show_condition"
     t.integer "display_order"
+    t.bigint "board_id", null: false
+    t.index ["board_id"], name: "index_elements_on_board_id"
   end
 
   create_table "oauth_access_grants", force: :cascade do |t|
@@ -96,6 +102,9 @@ ActiveRecord::Schema[7.0].define(version: 2023_01_23_112007) do
     t.index ["email"], name: "index_users_on_email", unique: true
   end
 
+  add_foreign_key "cards", "boards"
+  add_foreign_key "columns", "boards"
+  add_foreign_key "elements", "boards"
   add_foreign_key "oauth_access_grants", "oauth_applications", column: "application_id"
   add_foreign_key "oauth_access_tokens", "oauth_applications", column: "application_id"
 end
