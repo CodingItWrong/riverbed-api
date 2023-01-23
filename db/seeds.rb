@@ -2,6 +2,8 @@
 
 User.create!(email: "example@example.com", password: "password")
 
+Board.create!(name: "Video Games")
+
 title = Element.create!(
   display_order: 0,
   name: "Title",
