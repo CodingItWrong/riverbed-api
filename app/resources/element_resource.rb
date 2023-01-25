@@ -7,4 +7,6 @@ class ElementResource < ApplicationResource
     :show_condition,
     :read_only,
     :action
+
+  relationship :board, to: :one
 end
