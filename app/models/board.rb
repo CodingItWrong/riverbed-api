@@ -1,5 +1,5 @@
 class Board < ApplicationRecord
-  has_many :cards
-  has_many :columns
-  has_many :elements
+  has_many :cards, dependent: :destroy
+  has_many :columns, dependent: :destroy
+  has_many :elements, dependent: :destroy
 end
