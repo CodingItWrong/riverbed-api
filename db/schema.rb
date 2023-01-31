@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_01_26_133737) do
+ActiveRecord::Schema[7.0].define(version: 2023_01_31_131146) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -50,6 +50,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_01_26_133737) do
     t.jsonb "show_condition"
     t.integer "display_order"
     t.bigint "board_id", null: false
+    t.jsonb "options", default: {}, null: false
     t.index ["board_id"], name: "index_elements_on_board_id"
   end
 
