@@ -11,5 +11,9 @@ class Element < ApplicationRecord
     number: 2,
     datetime: 3
 
+  enum :initial_value,
+    empty: 0,
+    now: 1
+
   validates :element_type, presence: true
 end

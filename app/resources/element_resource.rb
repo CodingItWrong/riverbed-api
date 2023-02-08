@@ -2,6 +2,7 @@ class ElementResource < ApplicationResource
   attributes :name,
     :element_type,
     :data_type,
+    :initial_value,
     :display_order,
     :show_in_summary,
     :show_condition,
