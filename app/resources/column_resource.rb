@@ -1,6 +1,7 @@
 class ColumnResource < ApplicationResource
   attributes :name,
     :display_order,
+    :card_grouping,
     :card_inclusion_conditions
 
   # renamed to avoid issue where JR would silently discard writes
