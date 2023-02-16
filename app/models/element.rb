@@ -3,7 +3,8 @@ class Element < ApplicationRecord
 
   enum :element_type,
     field: 0,
-    button: 1
+    button: 1,
+    button_menu: 2
 
   enum :data_type,
     text: 0,
