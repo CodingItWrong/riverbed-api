@@ -10,7 +10,8 @@ class Element < ApplicationRecord
     text: 0,
     date: 1,
     number: 2,
-    datetime: 3
+    datetime: 3,
+    choice: 4
 
   enum :initial_value,
     empty: 0,
