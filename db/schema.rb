@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_02_08_131548) do
+ActiveRecord::Schema[7.0].define(version: 2023_02_20_130201) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -37,6 +37,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_02_08_131548) do
     t.jsonb "card_inclusion_conditions", default: [], null: false
     t.integer "display_order"
     t.jsonb "card_grouping", default: {}, null: false
+    t.jsonb "summary", default: {}, null: false
     t.index ["board_id"], name: "index_columns_on_board_id"
   end
 
