@@ -11,7 +11,7 @@ Rails.application.routes.draw do
     jsonapi_related_resources :elements
   end
 
-  jsonapi_resources :cards, only: %w[create update destroy]
+  jsonapi_resources :cards, only: %w[show create update destroy]
   jsonapi_resources :columns, only: %w[create update destroy]
   jsonapi_resources :elements, only: %w[create update destroy]
 end
