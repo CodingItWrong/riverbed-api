@@ -51,7 +51,9 @@ get '/widgets', headers: headers
 ### Running
 
 ```sh
-$ rails server
+$ bin/serve
 ```
+
+This opens ports so can be accessed from physical devices.
 
 [postgres-app]: http://postgresapp.com
