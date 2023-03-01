@@ -11,7 +11,8 @@ class Element < ApplicationRecord
     date: 1,
     number: 2,
     datetime: 3,
-    choice: 4
+    choice: 4,
+    geolocation: 5
 
   enum :initial_value,
     empty: 0,
