@@ -1,0 +1,128 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: https://www.destroyallsoftware.com/talks/ideology
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+      User-Agent:
+      - Ruby
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Server:
+      - Cowboy
+      Date:
+      - Thu, 02 Mar 2023 22:08:41 GMT
+      Connection:
+      - keep-alive
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Xss-Protection:
+      - 1; mode=block
+      X-Content-Type-Options:
+      - nosniff
+      X-Download-Options:
+      - noopen
+      X-Permitted-Cross-Domain-Policies:
+      - none
+      Referrer-Policy:
+      - strict-origin-when-cross-origin
+      Content-Type:
+      - text/html; charset=utf-8
+      Vary:
+      - Accept
+      Etag:
+      - W/"05c769bf18b4d98f47474b7d8991a7dc"
+      Cache-Control:
+      - max-age=0, private, must-revalidate
+      Set-Cookie:
+      - _destroyallsoftware_session=d0hzZUtIV0NNYU9xSzBhUEpJUmMwZThTT00zSVczUFFjM3RnNUF5bGE3eVhWRWR4SUhqbU44eDZFSlFIeVprN0c0eUpNQTVhZGJucnUzTk9jWVAwVVNLSmdQVTMzQjFEb21Ua050QldzZ3ZjSXBXanpDSWFqYUE3WlJRUUxiVzVzWkJzVldiclRyalNsNnFaOUcxZE53Y3VJNlNiTmttdUl1cjJhYXlMWWl4N2x0b0IzczA2dU5DcjhCVERyRERpLS1wOGtRcmxFRFZKWk5SYkJhUTBqVytnPT0%3D--f41b78f09a3324694b066f9c1e950501b9720108;
+        path=/; secure; HttpOnly
+      X-Request-Id:
+      - d77aafd1-dd26-44d6-81f4-c70ec8f0450b
+      X-Runtime:
+      - '0.011391'
+      Strict-Transport-Security:
+      - max-age=63072000; includeSubDomains
+      Content-Length:
+      - '6743'
+      Via:
+      - 1.1 vegur
+    body:
+      encoding: UTF-8
+      string: "\n\n\n<!DOCTYPE html>\n<html>\n<head>\n\n  <!-- mobile viewport setup
+        -->\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n\n
+        \ <title>\n    Ideology\n  </title>\n  <link rel=\"icon\" type=\"image/png\"
+        href=\"/favicon.png\" />\n  <link rel=\"apple-touch-icon\" href=\"/favicon.png\"
+        />\n  <link rel=\"stylesheet\" media=\"all\" href=\"/assets/application-11634a9cacde5175b67a0615d3ca156fd703bc70b7596455ee7ad25822d77fab.css\"
+        />\n  <script src=\"/assets/application-2ec153dafeb60059eaa776a607f3000ae2b99d68f4dc78b3e1e354755a4a8652.js\"></script>\n
+        \ \n  <meta name=\"csrf-param\" content=\"authenticity_token\" />\n<meta name=\"csrf-token\"
+        content=\"XHo3uBO0OCvguq1zWC82TBWnBKfHJ0yJD/1vcKpALCvKCSW+Mr3sm72y32AtVIBUyL+EivTPHyhVxqu1uoz/5w==\"
+        />\n</head>\n<body>\n  \n\n  <div class=\"top_navigation\">\n    <div class=\"primary_navigation\">\n
+        \     <div class=\"container\">\n        <div class=\"hamburger_button\"><img
+        src=\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACMAAAAoCAYAAAB0HkOaAAABG2lUWHRYTUw6Y29tLmFkb2JlLnhtcAAAAAAAPD94cGFja2V0IGJlZ2luPSLvu78iIGlkPSJXNU0wTXBDZWhpSHpyZVN6TlRjemtjOWQiPz4KPHg6eG1wbWV0YSB4bWxuczp4PSJhZG9iZTpuczptZXRhLyIgeDp4bXB0az0iWE1QIENvcmUgNS41LjAiPgogPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4KICA8cmRmOkRlc2NyaXB0aW9uIHJkZjphYm91dD0iIi8%2BCiA8L3JkZjpSREY%2BCjwveDp4bXBtZXRhPgo8P3hwYWNrZXQgZW5kPSJyIj8%2BGkqr6gAAAYJpQ0NQc1JHQiBJRUM2MTk2Ni0yLjEAACiRdZHPK0RRFMc%2FM0PECKEsLCYNKyNGTWyUkVCTpjHKYDPz5peaH6%2F3ZpJsle0UJTZ%2BLfgL2CprpYiULKysiQ3Tc96Mmknm3M49n%2Fu995zuPReswZSS1uuGIJ3JaYFpr2MxtORoeMFKD114aA8rujrh9%2FuoaZ%2F3WMx46zJr1T73rzVHY7oClkbhcUXVcsIzwr61nGryjnCnkgxHhc%2BEBzS5oPCdqUfK%2FGpyoszfJmvBwCRY24QdiSqOVLGS1NLC8nKc6VRe%2Bb2P%2BRJ7LLMwL7FXvAedANN4cTDLFJPSk2HGZPbgws2grKiRP1TKnyMruYrMKutorJIgSY4BUfNSPSYxLnpMRop1s%2F9%2F%2B6rHR9zl6nYv1D8bxnsfNGxDsWAYX0eGUTwG2xNcZir52UMY%2FRC9UNGcB9C6CedXFS2yCxdb0P2ohrVwSbKJW%2BNxeDuFlhB03EDTcrlnv%2FucPEBwQ77qGvb2oV%2FOt678AHuMZ%2B%2FPgSnPAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAkElEQVRYhe3XsQ3CMBCF4f%2BiVEjMwggsQ8FOsAwb4GFwhfTSxBIFKaC5U%2FS%2BBe4vbNkHZr8JSUfgDMyJHW%2FgEZKewCkxZGghSdkVw5Qd8KlcTMuOWLVStylxvtnOhKQrcCH%2Fat9D0gs4JIYM3Q%2Fllgno2RGrXukA3xLnm%2B1MqW%2Bnl7gt5d6mMrzEfeElzv6yAMvSPr7b38OWAAAAAElFTkSuQmCC\"
+        /></div>\n        <h1>\n          <a href=\"/\">Destroy All Software</a>\n
+        \       </h1>\n      </div>\n    </div>\n    <div class=\"secondary_links\">\n
+        \     <div class=\"container\">\n        <div class=\"links\">\n  <div class=\"section
+        screencasts_section\">\n    <div class=\"section_title\">Content</div>\n    <a
+        href=\"/screencasts/catalog\">\n      Screencasts\n</a>    <a href=\"/executeprogram\">\n
+        \     Execute Program\n</a>    <a href=\"/compendium\">\n      Programmer's
+        Compendium\n</a>    <a href=\"/talks\">\n      Conference Talks\n</a>  </div>\n\n
+        \ <div class=\"section account_section\">\n    <div class=\"section_title\">Account</div>\n
+        \     <a href=\"/screencasts/users/sign_in\">\n        Sign In\n</a>      <a
+        href=\"/screencasts/users/sign_up\">\n        Sign Up\n</a>  </div>\n\n  <div
+        class=\"section company_section\">\n    <div class=\"section_title\">Company</div>\n
+        \   <a href=\"/blog\">\n      Blog\n</a>    <a href=\"/screencasts/contact\">\n
+        \     Contact\n</a>    <a href=\"/screencasts/privacy_policy\">\n      Privacy
+        Policy\n</a>    <a href=\"/screencasts/faq\">\n      FAQ\n</a>    <a href=\"/screencasts/eula\">\n
+        \     EULA\n</a>  </div>\n\n  <div class=\"stretch\"></div></div>\n\n      </div>\n
+        \   </div>\n  </div>\n\n    <div class=\"contrast_section\">\n      <div class=\"container
+        notice\">\n      </div>\n    </div>\n  </div>\n\n  <div class=\"main_content\">\n
+        \     \n<div class=\"container talks_show_page\">\n  <div class=\"row\">\n
+        \   <h1 class=\"twelve columns\">Ideology</h1>\n  </div>\n\n    <div class=\"row\">\n
+        \     <p class=\"twelve columns byline\">\n        A  talk by Gary Bernhardt
+        from Strange Loop 2015\n      </p>\n    </div>\n\n    <div class=\"row\">\n
+        \     <div class=\"twelve columns\">\n        <video class=\"u-full-width\"
+        poster=\"/assets/posters/talks/ideology.poster-06e1dfbabd877d76c7f96b528929a51346f877b62dd0106dfd584440a561829d.png\"
+        preload=\"none\" controls>\n          <source src=\"https://destroyallsoftware-talks.s3.amazonaws.com/ideology.mp4?X-Amz-Algorithm=AWS4-HMAC-SHA256&amp;X-Amz-Credential=AKIAIKRVCECXBC4ZGHIQ%2F20230302%2Fus-east-1%2Fs3%2Faws4_request&amp;X-Amz-Date=20230302T220842Z&amp;X-Amz-Expires=14400&amp;X-Amz-SignedHeaders=host&amp;X-Amz-Signature=fd4e616c186eeb3f50ae043cad8c31e1922d1b5e6f14248a0676e491b3627b06\"
+        />\n          <track label=\"English\" kind=\"captions\" srclang=\"en\" src=\"/captions/talks/ideology.vtt\">\n
+        \       </video>\n      </div>\n    </div>\n\n    <div class=\"row\">\n      <div
+        class=\"twelve columns\">\n        <p class=\"description\">\n          Some
+        people claim that unit tests make type systems unnecessary: \"types are just
+        simple unit tests written for you, and simple unit tests aren't the important
+        ones\". Other people claim that type systems make unit tests unnecessary:
+        \"dynamic languages only need unit tests because they don't have type systems.\"
+        What's going on here? These can't both be right. We'll use this example and
+        a couple others to explore the unknown beliefs that structure our understanding
+        of the world.\n        </p>\n\n        <p>\n          If you liked this, you
+        might also like <a href=\"https://www.executeprogram.com\">Execute Program</a>:
+        interactive courses on TypeScript, Modern JavaScript, SQL, regular expressions,
+        and more.\n          Each course is made up of hundreds of interactive code
+        examples running live in your browser.\n        </p>\n      </div>\n    </div>\n</div>\n\n\n\n
+        \   \n  </div>\n\n  <div class=\"footer_section\">\n    <div class=\"container\">\n
+        \     <div class=\"row\">\n        <div class=\"twelve columns\">\n          <div
+        class=\"links\">\n  <div class=\"section screencasts_section\">\n    <div
+        class=\"section_title\">Content</div>\n    <a href=\"/screencasts/catalog\">\n
+        \     Screencasts\n</a>    <a href=\"/executeprogram\">\n      Execute Program\n</a>
+        \   <a href=\"/compendium\">\n      Programmer's Compendium\n</a>    <a href=\"/talks\">\n
+        \     Conference Talks\n</a>  </div>\n\n  <div class=\"section account_section\">\n
+        \   <div class=\"section_title\">Account</div>\n      <a href=\"/screencasts/users/sign_in\">\n
+        \       Sign In\n</a>      <a href=\"/screencasts/users/sign_up\">\n        Sign
+        Up\n</a>  </div>\n\n  <div class=\"section company_section\">\n    <div class=\"section_title\">Company</div>\n
+        \   <a href=\"/blog\">\n      Blog\n</a>    <a href=\"/screencasts/contact\">\n
+        \     Contact\n</a>    <a href=\"/screencasts/privacy_policy\">\n      Privacy
+        Policy\n</a>    <a href=\"/screencasts/faq\">\n      FAQ\n</a>    <a href=\"/screencasts/eula\">\n
+        \     EULA\n</a>  </div>\n\n  <div class=\"stretch\"></div></div>\n\n        </div>\n
+        \     </div>\n    </div>\n  </div>\n\n\n    <script defer data-domain=\"destroyallsoftware.com\"
+        src=\"https://plausible.io/js/plausible.js\"></script>\n\n\n  \n</body>\n</html>\n\n\n\n"
+  recorded_at: Thu, 02 Mar 2023 22:08:42 GMT
+recorded_with: VCR 6.1.0

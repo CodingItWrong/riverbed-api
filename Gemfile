@@ -28,6 +28,8 @@ end
 group :test do
   gem "factory_bot_rails"
   gem "rspec_junit_formatter"
+  gem "vcr"
+  gem "webmock"
 end
 
 group :production do
