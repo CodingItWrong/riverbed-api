@@ -35,5 +35,8 @@ module ListApp
     # Middleware like session, flash, cookies can be added back manually.
     # Skip views, helpers and assets when generating a new resource.
     config.api_only = true
+
+    # gives us the flexibility to queue later, but determinism now
+    config.active_job.queue_adapter = :inline
   end
 end
