@@ -10,6 +10,9 @@ gem "jsonapi-resources"
 gem "bcrypt"
 gem "doorkeeper"
 
+# for temporary link parsing
+gem "httparty"
+
 group :development do
   gem "bullet"
   gem "dotenv-rails"
