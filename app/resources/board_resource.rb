@@ -1,5 +1,5 @@
 class BoardResource < ApplicationResource
-  attribute :name
+  attributes :name, :favorited_at
 
   relationship :cards, to: :many
   relationship :columns, to: :many
