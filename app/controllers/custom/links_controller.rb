@@ -13,7 +13,7 @@ module Custom
       provided_header = request.headers["HTTP_AUTHORIZATION"]
       return nil unless provided_header.present?
 
-      key = provided_header.gsub(/^Bearer /i, '')
+      key = provided_header.gsub(/^Bearer /i, "")
       ApiKey.find_by(key:)
     end
 

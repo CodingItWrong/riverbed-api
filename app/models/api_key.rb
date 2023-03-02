@@ -1,4 +1,4 @@
-require 'securerandom'
+require "securerandom"
 
 class ApiKey < ApplicationRecord
   belongs_to :user
