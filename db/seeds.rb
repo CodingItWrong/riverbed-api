@@ -83,16 +83,85 @@ def create_links!
     name: "URL",
     show_in_summary: true).id.to_s
   source = Element.create!(board:,
-    display_order: 1,
+    display_order: 3,
     element_type: :field,
     data_type: :text,
     name: "Source").id.to_s
   notes = Element.create!(board:,
-    display_order: 1,
+    display_order: 4,
     element_type: :field,
     data_type: :text,
     name: "Notes",
     element_options: {"multiline" => true}).id.to_s
+  read_at = Element.create!(board:,
+    display_order: 5,
+    element_type: :field,
+    data_type: :datetime,
+    read_only: true,
+    name: "Read At").id.to_s
+  read_status_changed_at = Element.create!(board:,
+    display_order: 6,
+    element_type: :field,
+    data_type: :datetime,
+    read_only: true,
+    name: "Read Status Changed At").id.to_s
+  Element.create!(board:,
+    display_order: 7,
+    element_type: :button,
+    name: "Mark Read",
+    element_options: {"actions" => [
+      {"command" => "SET_VALUE", "field" => read_at, "value" => "now"},
+      {"command" => "SET_VALUE", "field" => read_status_changed_at, "value" => "now"}
+    ]},
+    show_condition: {"field" => read_at, "query" => "IS_EMPTY"}).id.to_s
+  Element.create!(board:,
+    display_order: 7,
+    element_type: :button,
+    name: "Mark Unread",
+    element_options: {"actions" => [
+      {"command" => "SET_VALUE", "field" => read_at, "value" => "empty"},
+      {"command" => "SET_VALUE", "field" => read_status_changed_at, "value" => "now"}
+    ]},
+    show_condition: {"field" => read_at, "query" => "IS_NOT_EMPTY"}).id.to_s
+
+  Column.create!(board:,
+    name: "Unread",
+    display_order: 1,
+    card_inclusion_conditions: [{field: read_at, query: "IS_EMPTY"}],
+    sort_order: {field: read_status_changed_at, direction: "DESCENDING"})
+  Column.create!(board:,
+    name: "Read",
+    display_order: 2,
+    card_inclusion_conditions: [{field: read_at, query: "IS_NOT_EMPTY"}],
+    sort_order: {field: read_status_changed_at, direction: "DESCENDING"})
+
+  Card.create!(board:, field_values: {
+    title => "Apple",
+    url => "https://apple.com",
+    read_at => format_date(1.year.ago),
+    read_status_changed_at => format_date(1.year.ago)
+  })
+  Card.create!(board:, field_values: {
+    title => "Arc Browser",
+    url => "https://arc.net",
+    read_at => format_date(1.month.ago),
+    read_status_changed_at => format_date(1.month.ago)
+  })
+  Card.create!(board:, field_values: {
+    title => "Expo",
+    url => "https://expo.dev",
+    read_status_changed_at => format_date(1.day.ago)
+  })
+  Card.create!(board:, field_values: {
+    title => "React Native",
+    url => "https://reactnative.dev",
+    read_status_changed_at => format_date(1.month.ago)
+  })
+  Card.create!(board:, field_values: {
+    title => "React Native for Web",
+    url => "https://necolas.github.io/react-native-web/",
+    read_status_changed_at => format_date(1.week.ago)
+  })
 end
 
 def create_todos!
@@ -141,14 +210,18 @@ def create_todos!
   complete = Element.create!(board:,
     display_order: 6,
     element_type: :button,
-    name: "Complete",
-    action: {"command" => "SET_VALUE", "field" => completed_at, "value" => "now"},
+    name: "Uncomplete",
+    element_options: {
+      "actions" => [{"command" => "SET_VALUE", "field" => completed_at, "value" => "now"}]
+    },
     show_condition: {"field" => completed_at, "query" => "IS_EMPTY"}).id.to_s
   uncomplete = Element.create!(board:,
     display_order: 6,
     element_type: :button,
     name: "Complete",
-    action: {"command" => "SET_VALUE", "field" => completed_at, "value" => "empty"},
+    element_options: {
+      "actions" => [{"command" => "SET_VALUE", "field" => completed_at, "value" => "empty"}]
+    },
     show_condition: {"field" => completed_at, "query" => "IS_NOT_EMPTY"}).id.to_s
   defer = Element.create!(board:,
     display_order: 7,
