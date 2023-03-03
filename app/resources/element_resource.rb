@@ -6,8 +6,7 @@ class ElementResource < ApplicationResource
     :display_order,
     :show_in_summary,
     :show_condition,
-    :read_only,
-    :action # TODO: consider moving to options, as it is element-type-specific
+    :read_only
 
   # renamed to avoid issue where JR would silently discard writes
   attribute :options, delegate: :element_options
