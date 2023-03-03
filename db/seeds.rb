@@ -1,86 +1,222 @@
-# frozen_string_literal: true
+DEV_API_KEY = "KAhbB18D0QZBFXBCJKE4xJZYyaWkUTK25LWrqNMIXI2-FSqT5NgJpA-ermcllZG3s8mqioWkfZWNlUVwcOIGrw"
 
-User.create!(email: "example@example.com", password: "password")
+user = User.create!(email: "example@example.com", password: "password")
+user.api_keys.create!(key: DEV_API_KEY)
 
-Board.create!(name: "Video Games")
+def format_date(date) = date.strftime("%Y-%m-%d")
 
-title = Element.create!(
-  display_order: 0,
-  name: "Title",
-  element_type: :field,
-  data_type: :text,
-  show_in_summary: true
-)
-publisher = Element.create!(
-  display_order: 1,
-  name: "Publisher",
-  element_type: :field,
-  data_type: :text,
-  show_in_summary: false
-)
-released_at = Element.create!(
-  display_order: 3,
-  name: "Released At",
-  element_type: :field,
-  data_type: :date,
-  show_in_summary: true,
-  read_only: true
-)
-Element.create!(
-  display_order: 4,
-  name: "Release",
-  element_type: :button,
-  show_in_summary: false,
-  action: {
-    command: "SET_VALUE",
-    field: released_at.id.to_s,
-    value: "NOW"
-  },
-  show_condition: {
-    query: "IS_EMPTY",
-    field: released_at.id.to_s
-  }
-)
-Element.create!(
-  display_order: 5,
-  name: "Unrelease",
-  element_type: :button,
-  show_in_summary: false,
-  action: {
-    command: "SET_VALUE",
-    field: released_at.id.to_s,
-    value: "EMPTY"
-  },
-  show_condition: {
-    query: "IS_NOT_EMPTY",
-    field: released_at.id.to_s
-  }
-)
+def create_life_log!
+  board = Board.create!(name: "Life Log")
 
-Column.create!(name: "Released", card_inclusion_condition: {
-  query: "IS_NOT_EMPTY",
-  field: released_at.id.to_s
-})
-Column.create!(name: "Unreleased", card_inclusion_condition: {
-  query: "IS_EMPTY",
-  field: released_at.id.to_s
-})
+  location = Element.create!(board:,
+    display_order: 1,
+    element_type: :field,
+    data_type: :geolocation,
+    name: "Location").id.to_s
+  name = Element.create!(board:,
+    display_order: 2,
+    element_type: :field,
+    data_type: :text,
+    name: "Location Name",
+    show_in_summary: true).id.to_s
+  Element.create!(board:,
+    display_order: 3,
+    element_type: :field,
+    data_type: :text,
+    name: "Event",
+    show_in_summary: true)
+  check_in_time = Element.create!(board:,
+    display_order: 4,
+    element_type: :field,
+    data_type: :datetime,
+    name: "Check-In Time",
+    initial_value: "now",
+    show_in_summary: true,
+    read_only: true,
+    element_options: {"show-label-when-read-only": true}).id.to_s
 
-Card.create!(field_values: {
-  title.id.to_s => "Final Fantasy 7",
-  publisher.id.to_s => "Square Enix",
-  released_at.id.to_s => "1997-01-31"
-})
+  Column.create!(board:,
+    name: "This Month",
+    card_inclusion_conditions: [{"field" => check_in_time, "query" => "IS_CURRENT_MONTH"}],
+    sort_order: {"field" => check_in_time, "direction" => "DESCENDING"})
+  Column.create!(board:,
+    name: "Past Months",
+    card_inclusion_conditions: [{"field" => check_in_time, "query" => "IS_NOT_CURRENT_MONTH"}],
+    sort_order: {"field" => check_in_time, "direction" => "DESCENDING"})
 
-Card.create!(field_values: {
-  title.id.to_s => "Castlevania: Symphony of the Night",
-  publisher.id.to_s => "Konami",
-  released_at.id.to_s => "1997-03-20"
-})
-
-20.times do |i|
-  Card.create!(field_values: {
-    title.id.to_s => "Game #{i + 1}",
-    publisher.id.to_s => "EA"
+  Card.create!(board:, field_values: {
+    name => "Starbucks",
+    location => {"lat" => "33.826020", "lng" => "-84.032250"},
+    check_in_time => 1.day.ago.iso8601
+  })
+  Card.create!(board:, field_values: {
+    name => "Maneul's Tavern",
+    location => {"lat" => "33.770800", "lng" => "-84.352730"},
+    check_in_time => 1.week.ago.iso8601
+  })
+  Card.create!(board:, field_values: {
+    name => "Sheffield, England",
+    location => {"lat" => "53.383331", "lng" => "-1.466667"},
+    check_in_time => "2022-10-20T00:00:00Z"
+  })
+  Card.create!(board:, field_values: {
+    name => "Wrocław, Poland",
+    location => {"lat" => "51.107883", "lng" => "17.038538"},
+    check_in_time => "2022-09-01T00:00:00Z"
   })
 end
+
+def create_links!
+  board = Board.create!(name: "Links")
+
+  title = Element.create!(board:,
+    display_order: 1,
+    element_type: :field,
+    data_type: :text,
+    name: "Title",
+    show_in_summary: true).id.to_s
+  url = Element.create!(board:,
+    display_order: 2,
+    element_type: :field,
+    data_type: :text,
+    name: "URL",
+    show_in_summary: true).id.to_s
+  source = Element.create!(board:,
+    display_order: 1,
+    element_type: :field,
+    data_type: :text,
+    name: "Source").id.to_s
+  notes = Element.create!(board:,
+    display_order: 1,
+    element_type: :field,
+    data_type: :text,
+    name: "Notes",
+    element_options: {"multiline" => true}).id.to_s
+end
+
+def create_todos!
+  board = Board.create!(name: "To Dos")
+
+  name = Element.create!(board:,
+    display_order: 1,
+    element_type: :field,
+    data_type: :text,
+    name: "Name",
+    show_in_summary: true,
+    element_options: {"multiline" => true}).id.to_s
+  time_morning = "fake_uuid_1"
+  time_day = "fake_uuid_2"
+  time_evening = "fake_uuid_3"
+  time_after_kids_in_bed = "fake_uuid_4"
+  time_of_day = Element.create!(board:,
+    display_order: 2,
+    element_type: :field,
+    data_type: :choice,
+    name: "Time of Day",
+    element_options: {"choices" => [
+      {id: time_morning, label: "Morning"},
+      {id: time_day, label: "Day"},
+      {id: time_evening, label: "Evening"},
+      {id: time_after_kids_in_bed, label: "After Kids in Bed"}
+    ]}).id.to_s
+  defer_until = Element.create!(board:,
+    display_order: 3,
+    element_type: :field,
+    data_type: :date,
+    name: "Defer Until",
+    element_options: {"show-label-when-read-only" => true}).id.to_s
+  notes = Element.create!(board:,
+    display_order: 4,
+    element_type: :field,
+    data_type: :text,
+    name: "Notes",
+    element_options: {"multiline" => true}).id.to_s
+  completed_at = Element.create!(board:,
+    display_order: 5,
+    element_type: :field,
+    data_type: :datetime,
+    name: "Completed At",
+    element_options: {"show-label-when-read-only" => true}).id.to_s
+  complete = Element.create!(board:,
+    display_order: 6,
+    element_type: :button,
+    name: "Complete",
+    action: {"command" => "SET_VALUE", "field" => completed_at, "value" => "now"},
+    show_condition: {"field" => completed_at, "query" => "IS_EMPTY"}).id.to_s
+  uncomplete = Element.create!(board:,
+    display_order: 6,
+    element_type: :button,
+    name: "Complete",
+    action: {"command" => "SET_VALUE", "field" => completed_at, "value" => "empty"},
+    show_condition: {"field" => completed_at, "query" => "IS_NOT_EMPTY"}).id.to_s
+  defer = Element.create!(board:,
+    display_order: 7,
+    element_type: :button_menu,
+    name: "Defer",
+    element_options: {items: [
+      {name: "1 Day", action: {command: "ADD_DAYS", field: defer_until, value: "1"}},
+      {name: "2 Days", action: {command: "ADD_DAYS", field: defer_until, value: "2"}},
+      {name: "3 Days", action: {command: "ADD_DAYS", field: defer_until, value: "3"}},
+      {name: "1 Week", action: {command: "ADD_DAYS", field: defer_until, value: "7"}}
+    ]},
+    show_condition: {"field" => completed_at, "query" => "IS_NOT_EMPTY"}).id.to_s
+
+  Column.create!(board:,
+    name: "Available",
+    display_order: 1,
+    card_inclusion_conditions: [
+      {field: defer_until, query: "IS_NOT_FUTURE"},
+      {field: completed_at, query: "IS_EMPTY"}
+    ],
+    card_grouping: {field: time_of_day, direction: "ASCENDING"},
+    sort_order: {field: name, direction: "ASCENDING"},
+    summary: {function: "COUNT"})
+  Column.create!(board:,
+    name: "Future",
+    display_order: 2,
+    card_inclusion_conditions: [
+      {field: defer_until, query: "IS_FUTURE"},
+      {field: completed_at, query: "IS_EMPTY"}
+    ],
+    card_grouping: {field: defer_until, direction: "ASCENDING"},
+    sort_order: {field: name, direction: "ASCENDING"},
+    summary: {function: "COUNT"})
+  Column.create!(board:,
+    name: "Complete",
+    display_order: 3,
+    card_inclusion_conditions: [{field: completed_at, query: "IS_NOT_EMPTY"}],
+    sort_order: {field: name, direction: "ASCENDING"})
+
+  Card.create!(board:, field_values: {
+    name => "Take in recycling",
+    time_of_day => time_day
+  })
+  Card.create!(board:, field_values: {
+    name => "Clean office desk",
+    time_of_day => time_day
+  })
+  Card.create!(board:, field_values: {
+    name => "Put T-ball supplies in car",
+    time_of_day => time_evening
+  })
+  Card.create!(board:, field_values: {
+    name => "Submit timesheet",
+    defer_until => format_date(2.days.from_now)
+  })
+  Card.create!(board:, field_values: {
+    name => "Make a budget",
+    defer_until => format_date(1.month.from_now)
+  })
+  Card.create!(board:, field_values: {
+    name => "Exercise",
+    defer_until => format_date(1.month.from_now)
+  })
+  Card.create!(board:, field_values: {
+    name => "Build Lego castle",
+    completed_at => format_date(1.week.ago)
+  })
+end
+
+create_life_log!
+create_links!
+create_todos!
