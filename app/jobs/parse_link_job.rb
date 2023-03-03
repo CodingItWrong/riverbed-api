@@ -38,8 +38,7 @@ class ParseLinkJob < ApplicationJob
       url_field.id => attributes[:url],
       title_field.id => attributes[:title],
       saved_at_field.id => Time.zone.now.iso8601,
-      read_status_changed_at_field.id => Time.zone.now.iso8601,
-      read_field.id => unread_choice["id"]
+      read_status_changed_at_field.id => Time.zone.now.iso8601
     })
   end
 
@@ -54,11 +53,4 @@ class ParseLinkJob < ApplicationJob
   def saved_at_field = field_by_name("Saved At")
 
   def read_status_changed_at_field = field_by_name("Read Status Changed At")
-
-  def read_field = field_by_name("Read")
-
-  def unread_choice =
-    read_field
-      .element_options["choices"]
-      .find { _1["label"] == "Unread" }
 end
