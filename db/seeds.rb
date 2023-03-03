@@ -93,20 +93,29 @@ def create_links!
     data_type: :text,
     name: "Notes",
     element_options: {"multiline" => true}).id.to_s
-  read_at = Element.create!(board:,
+  saved_at = Element.create!(board:,
     display_order: 5,
     element_type: :field,
     data_type: :datetime,
     read_only: true,
-    name: "Read At").id.to_s
-  read_status_changed_at = Element.create!(board:,
+    name: "Saved At",
+    element_options: {"show-label-when-read-only": true}).id.to_s
+  read_at = Element.create!(board:,
     display_order: 6,
     element_type: :field,
     data_type: :datetime,
     read_only: true,
-    name: "Read Status Changed At").id.to_s
-  Element.create!(board:,
+    name: "Read At",
+    element_options: {"show-label-when-read-only": true}).id.to_s
+  read_status_changed_at = Element.create!(board:,
     display_order: 7,
+    element_type: :field,
+    data_type: :datetime,
+    read_only: true,
+    name: "Read Status Changed At",
+    element_options: {"show-label-when-read-only": true}).id.to_s
+  Element.create!(board:,
+    display_order: 8,
     element_type: :button,
     name: "Mark Read",
     element_options: {"actions" => [
@@ -115,7 +124,7 @@ def create_links!
     ]},
     show_condition: {"field" => read_at, "query" => "IS_EMPTY"}).id.to_s
   Element.create!(board:,
-    display_order: 7,
+    display_order: 8,
     element_type: :button,
     name: "Mark Unread",
     element_options: {"actions" => [
