@@ -237,12 +237,12 @@ def create_todos!
     element_type: :button_menu,
     name: "Defer",
     element_options: {items: [
-      {name: "1 Day", action: {command: "ADD_DAYS", field: defer_until, value: "1"}},
-      {name: "2 Days", action: {command: "ADD_DAYS", field: defer_until, value: "2"}},
-      {name: "3 Days", action: {command: "ADD_DAYS", field: defer_until, value: "3"}},
-      {name: "1 Week", action: {command: "ADD_DAYS", field: defer_until, value: "7"}}
+      {name: "1 Day", actions: [{command: "ADD_DAYS", field: defer_until, value: "1"}]},
+      {name: "2 Days", actions: [{command: "ADD_DAYS", field: defer_until, value: "2"}]},
+      {name: "3 Days", actions: [{command: "ADD_DAYS", field: defer_until, value: "3"}]},
+      {name: "1 Week", actions: [{command: "ADD_DAYS", field: defer_until, value: "7"}]}
     ]},
-    show_condition: {"field" => completed_at, "query" => "IS_NOT_EMPTY"}).id.to_s
+    show_condition: {"field" => completed_at, "query" => "IS_EMPTY"}).id.to_s
 
   Column.create!(board:,
     name: "Available",
