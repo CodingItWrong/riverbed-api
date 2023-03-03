@@ -15,22 +15,6 @@ RSpec.describe "custom links endpoint", type: :request do
   let!(:title_field) { FactoryBot.create(:element, :field, board:, name: "Title") }
   let!(:saved_at_field) { FactoryBot.create(:element, :field, board:, data_type: :datetime, name: "Saved At") }
   let!(:read_status_changed_at_field) { FactoryBot.create(:element, :field, board:, data_type: :datetime, name: "Read Status Changed At") }
-  let(:unread_choice) { {"id" => "fake_uuid_1", "label" => "Unread"} }
-  let!(:read_field) {
-    FactoryBot.create(
-      :element,
-      :field,
-      board:,
-      name: "Read",
-      data_type: :choice,
-      element_options: {
-        "choices" => [
-          unread_choice,
-          {"id" => "fake_uuid_2", "label" => "Read"}
-        ]
-      }
-    )
-  }
 
   let(:send!) { post custom_links_path, params: body, headers: headers }
 
@@ -98,7 +82,6 @@ RSpec.describe "custom links endpoint", type: :request do
           expect(card.field_values).to eq(
             url_field.id.to_s => url,
             title_field.id.to_s => title,
-            read_field.id.to_s => unread_choice["id"],
             saved_at_field.id.to_s => now,
             read_status_changed_at_field.id.to_s => now
           )
