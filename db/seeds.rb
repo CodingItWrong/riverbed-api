@@ -5,6 +5,7 @@ user.api_keys.create!(key: DEV_API_KEY)
 
 def format_date(date) = date.strftime("%Y-%m-%d")
 
+# standard:disable Lint/UselessAssignment
 def create_life_log!
   board = Board.create!(name: "Life Log")
 
@@ -216,6 +217,7 @@ def create_todos!
     completed_at => format_date(1.week.ago)
   })
 end
+# standard:enable Lint/UselessAssignment
 
 create_life_log!
 create_links!
