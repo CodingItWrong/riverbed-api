@@ -8,6 +8,6 @@ class ApiKey < ApplicationRecord
   private
 
   def initialize_key
-    self.key = SecureRandom.urlsafe_base64(64)
+    self.key ||= SecureRandom.urlsafe_base64(64)
   end
 end
