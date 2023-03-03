@@ -4,6 +4,8 @@ require "rails_helper"
 require "link_parser"
 
 RSpec.describe "custom links endpoint", type: :request do
+  include ActiveSupport::Testing::TimeHelpers
+
   let(:url) { "https://example.com/blog/sample-post-title" }
   let(:headers) { {"Authorization" => "Bearer #{token}"} }
   let(:body) { {title: title, url: url} }
@@ -11,6 +13,24 @@ RSpec.describe "custom links endpoint", type: :request do
   let(:board) { FactoryBot.create(:board, name: "Links") }
   let!(:url_field) { FactoryBot.create(:element, :field, board:, name: "URL") }
   let!(:title_field) { FactoryBot.create(:element, :field, board:, name: "Title") }
+  let!(:saved_at_field) { FactoryBot.create(:element, :field, board:, data_type: :datetime, name: "Saved At") }
+  let!(:read_status_changed_at_field) { FactoryBot.create(:element, :field, board:, data_type: :datetime, name: "Read Status Changed At") }
+  let(:unread_choice) { {"id" => "fake_uuid_1", "label" => "Unread"} }
+  let!(:read_field) {
+    FactoryBot.create(
+      :element,
+      :field,
+      board:,
+      name: "Read",
+      data_type: :choice,
+      element_options: {
+        "choices" => [
+          unread_choice,
+          {"id" => "fake_uuid_2", "label" => "Read"}
+        ]
+      }
+    )
+  }
 
   let(:send!) { post custom_links_path, params: body, headers: headers }
 
@@ -57,6 +77,13 @@ RSpec.describe "custom links endpoint", type: :request do
 
       context "with a title" do
         let(:title) { "custom title" }
+        let(:now) { Time.zone.now.iso8601 }
+
+        around(:each) do |example|
+          freeze_time do
+            example.run
+          end
+        end
 
         it "creates a link" do
           expect {
@@ -70,7 +97,10 @@ RSpec.describe "custom links endpoint", type: :request do
           card = Card.last
           expect(card.field_values).to eq(
             url_field.id.to_s => url,
-            title_field.id.to_s => title
+            title_field.id.to_s => title,
+            read_field.id.to_s => unread_choice["id"],
+            saved_at_field.id.to_s => now,
+            read_status_changed_at_field.id.to_s => now
           )
         end
       end
