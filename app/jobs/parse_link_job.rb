@@ -36,13 +36,29 @@ class ParseLinkJob < ApplicationJob
     # Once this is extracted from the core API this will be a POST instead of a DB creation
     board.cards.create!("field_values" => {
       url_field.id => attributes[:url],
-      title_field.id => attributes[:title]
+      title_field.id => attributes[:title],
+      saved_at_field.id => Time.zone.now.iso8601,
+      read_status_changed_at_field.id => Time.zone.now.iso8601,
+      read_field.id => unread_choice["id"]
     })
   end
 
   def board = Board.find_by(name: "Links")
 
-  def url_field = board.elements.find_by(element_type: :field, name: "URL")
+  def field_by_name(name) = board.elements.find_by(element_type: :field, name:)
 
-  def title_field = board.elements.find_by(element_type: :field, name: "Title")
+  def url_field = field_by_name("URL")
+
+  def title_field = field_by_name("Title")
+
+  def saved_at_field = field_by_name("Saved At")
+
+  def read_status_changed_at_field = field_by_name("Read Status Changed At")
+
+  def read_field = field_by_name("Read")
+
+  def unread_choice =
+    read_field
+      .element_options["choices"]
+      .find { _1["label"] == "Unread" }
 end
