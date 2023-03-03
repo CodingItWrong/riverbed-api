@@ -22,6 +22,7 @@ group :development, :test do
   gem "coderay"
   gem "debug", platforms: %i[mri mingw x64_mingw]
   gem "rspec-rails"
+  gem "solargraph"
   gem "standard"
 end
 
