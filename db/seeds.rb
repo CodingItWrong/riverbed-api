@@ -47,7 +47,7 @@ def create_life_log!
 
   Card.create!(board:, field_values: {
     name => "Starbucks",
-    location => {"lat" => "33.826020", "lng" => "-84.032250"},
+    location => {"lat" => "33.857327", "lng" => "-84.019913"},
     check_in_time => 1.day.ago.iso8601
   })
   Card.create!(board:, field_values: {
@@ -215,11 +215,12 @@ def create_todos!
     element_type: :field,
     data_type: :datetime,
     name: "Completed At",
+    read_only: true,
     element_options: {"show-label-when-read-only" => true}).id.to_s
   complete = Element.create!(board:,
     display_order: 6,
     element_type: :button,
-    name: "Uncomplete",
+    name: "Complete",
     element_options: {
       "actions" => [{"command" => "SET_VALUE", "field" => completed_at, "value" => "now"}]
     },
@@ -227,7 +228,7 @@ def create_todos!
   uncomplete = Element.create!(board:,
     display_order: 6,
     element_type: :button,
-    name: "Complete",
+    name: "Uncomplete",
     element_options: {
       "actions" => [{"command" => "SET_VALUE", "field" => completed_at, "value" => "empty"}]
     },
