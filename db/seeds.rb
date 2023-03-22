@@ -122,7 +122,7 @@ def create_links!
       {"command" => "SET_VALUE", "field" => read_at, "value" => "now"},
       {"command" => "SET_VALUE", "field" => read_status_changed_at, "value" => "now"}
     ]},
-    show_condition: {"field" => read_at, "query" => "IS_EMPTY"}).id.to_s
+    show_conditions: [{"field" => read_at, "query" => "IS_EMPTY"}]).id.to_s
   Element.create!(board:,
     display_order: 8,
     element_type: :button,
@@ -131,7 +131,7 @@ def create_links!
       {"command" => "SET_VALUE", "field" => read_at, "value" => "empty"},
       {"command" => "SET_VALUE", "field" => read_status_changed_at, "value" => "now"}
     ]},
-    show_condition: {"field" => read_at, "query" => "IS_NOT_EMPTY"}).id.to_s
+    show_conditions: [{"field" => read_at, "query" => "IS_NOT_EMPTY"}]).id.to_s
 
   Column.create!(board:,
     name: "Unread",
@@ -224,7 +224,7 @@ def create_todos!
     element_options: {
       "actions" => [{"command" => "SET_VALUE", "field" => completed_at, "value" => "now"}]
     },
-    show_condition: {"field" => completed_at, "query" => "IS_EMPTY"}).id.to_s
+    show_conditions: [{"field" => completed_at, "query" => "IS_EMPTY"}]).id.to_s
   uncomplete = Element.create!(board:,
     display_order: 6,
     element_type: :button,
@@ -232,7 +232,7 @@ def create_todos!
     element_options: {
       "actions" => [{"command" => "SET_VALUE", "field" => completed_at, "value" => "empty"}]
     },
-    show_condition: {"field" => completed_at, "query" => "IS_NOT_EMPTY"}).id.to_s
+    show_conditions: [{"field" => completed_at, "query" => "IS_NOT_EMPTY"}]).id.to_s
   defer = Element.create!(board:,
     display_order: 7,
     element_type: :button_menu,
@@ -243,7 +243,7 @@ def create_todos!
       {name: "3 Days", actions: [{command: "ADD_DAYS", field: defer_until, value: "3"}]},
       {name: "1 Week", actions: [{command: "ADD_DAYS", field: defer_until, value: "7"}]}
     ]},
-    show_condition: {"field" => completed_at, "query" => "IS_EMPTY"}).id.to_s
+    show_conditions: [{"field" => completed_at, "query" => "IS_EMPTY"}]).id.to_s
 
   Column.create!(board:,
     name: "Available",
