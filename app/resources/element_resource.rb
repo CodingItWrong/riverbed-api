@@ -5,7 +5,7 @@ class ElementResource < ApplicationResource
     :initial_value,
     :display_order,
     :show_in_summary,
-    :show_condition,
+    :show_conditions,
     :read_only
 
   # renamed to avoid issue where JR would silently discard writes
