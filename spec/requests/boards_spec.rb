@@ -101,4 +101,50 @@ RSpec.describe "boards" do
       end
     end
   end
+
+  describe "PATCH /boards/:id" do
+    let(:name) { "Updated Board Name" }
+
+    let(:params) {
+      {
+        data: {
+          type: "boards",
+          id: board.id.to_s,
+          attributes: {name:}
+        }
+      }
+    }
+
+    context "when logged out" do
+      it "returns an auth error" do
+        expect {
+          patch "/boards/#{board.id}", params: params.to_json
+        }.not_to change { Board.last.name }
+
+        expect(response.status).to eq(401)
+        expect(response.body).to be_empty
+      end
+    end
+
+    context "when logged in" do
+      include_context "with a logged in user"
+
+      it "updates and returns the board" do
+        patch "/boards/#{board.id}", params: params.to_json, headers: headers
+
+        board = Board.last
+
+        expect(response.status).to eq(200)
+
+        response_body = JSON.parse(response.body)
+        expect(response_body["data"]).to include({
+          "type" => "boards",
+          "id" => board.id.to_s,
+          "attributes" => a_hash_including("name" => name)
+        })
+
+        expect(Board.last.name).to eq(name)
+      end
+    end
+  end
 end
