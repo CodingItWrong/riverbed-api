@@ -147,4 +147,30 @@ RSpec.describe "boards" do
       end
     end
   end
+
+  describe "DELETE /boards/:id" do
+    context "when logged out" do
+      it "returns an auth error" do
+        expect {
+          delete "/boards/#{board.id}"
+        }.not_to change { Board.count }
+
+        expect(response.status).to eq(401)
+        expect(response.body).to be_empty
+      end
+    end
+
+    context "when logged in" do
+      include_context "with a logged in user"
+
+      it "deletes the board" do
+        delete "/boards/#{board.id}", headers: headers
+
+        expect(response.status).to eq(204)
+        expect(response.body).to be_empty
+
+        expect { Board.find(board.id) }.to raise_error(ActiveRecord::RecordNotFound)
+      end
+    end
+  end
 end
