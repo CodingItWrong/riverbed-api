@@ -46,7 +46,7 @@ RSpec.describe "columns" do
   end
 
   describe "PATCH /columns/:id" do
-    it "updates a columm belonging to the user" do
+    it "updates a column belonging to the user" do
       params = {
         data: {
           type: "columns",
