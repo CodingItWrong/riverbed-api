@@ -1,7 +1,11 @@
 require "rails_helper"
 
 RSpec.describe "boards" do
-  let!(:board) { FactoryBot.create(:board) }
+  include_context "with a logged in user"
+
+  let!(:user_board) { FactoryBot.create(:board, user:) }
+  let!(:other_user_board) { FactoryBot.create(:board) }
+  let(:response_body) { JSON.parse(response.body) }
 
   describe "GET /boards" do
     context "when logged out" do
@@ -14,18 +18,14 @@ RSpec.describe "boards" do
     end
 
     context "when logged in" do
-      include_context "with a logged in user"
-
-      it "returns the board" do
+      it "returns the user's board" do
         get "/boards", headers: headers
 
         expect(response.status).to eq(200)
-
-        response_body = JSON.parse(response.body)
         expect(response_body["data"]).to contain_exactly(a_hash_including(
           "type" => "boards",
-          "id" => board.id.to_s,
-          "attributes" => a_hash_including("name" => board.name)
+          "id" => user_board.id.to_s,
+          "attributes" => a_hash_including("name" => user_board.name)
         ))
       end
     end
@@ -34,7 +34,7 @@ RSpec.describe "boards" do
   describe "GET /boards/:id" do
     context "when logged out" do
       it "returns an auth error" do
-        get "/boards/#{board.id}"
+        get "/boards/#{user_board.id}"
 
         expect(response.status).to eq(401)
         expect(response.body).to be_empty
@@ -42,19 +42,26 @@ RSpec.describe "boards" do
     end
 
     context "when logged in" do
-      include_context "with a logged in user"
-
-      it "returns the board" do
-        get("/boards/#{board.id}", headers: headers)
+      it "returns a board belonging to the user" do
+        get("/boards/#{user_board.id}", headers: headers)
 
         expect(response.status).to eq(200)
 
-        response_body = JSON.parse(response.body)
         expect(response_body["data"]).to include(
           "type" => "boards",
-          "id" => board.id.to_s,
-          "attributes" => a_hash_including("name" => board.name)
+          "id" => user_board.id.to_s,
+          "attributes" => a_hash_including("name" => user_board.name)
         )
+      end
+
+      it "does not return a board belonging to another user" do
+        get("/boards/#{other_user_board.id}", headers: headers)
+
+        expect(response.status).to eq(404)
+        expect(response_body["errors"]).to include(a_hash_including(
+          "code" => "404",
+          "title" => "Record not found"
+        ))
       end
     end
   end
@@ -72,7 +79,7 @@ RSpec.describe "boards" do
     context "when logged out" do
       it "returns an auth error" do
         expect {
-          post "/boards", params: params.to_json, headers: headers
+          post "/boards", params: params.to_json
         }.not_to change { Board.count }
 
         expect(response.status).to eq(401)
@@ -81,18 +88,15 @@ RSpec.describe "boards" do
     end
 
     context "when logged in" do
-      include_context "with a logged in user"
-
       it "creates and returns a board" do
         expect {
           post "/boards", params: params.to_json, headers: headers
         }.to change { Board.count }.by(1)
 
         board = Board.last
+        expect(board.user).to eq(user)
 
         expect(response.status).to eq(201)
-
-        response_body = JSON.parse(response.body)
         expect(response_body["data"]).to include({
           "type" => "boards",
           "id" => board.id.to_s,
@@ -105,21 +109,21 @@ RSpec.describe "boards" do
   describe "PATCH /boards/:id" do
     let(:name) { "Updated Board Name" }
 
-    let(:params) {
+    def params(board)
       {
         data: {
           type: "boards",
           id: board.id.to_s,
           attributes: {name:}
         }
-      }
-    }
+      }.to_json
+    end
 
     context "when logged out" do
       it "returns an auth error" do
         expect {
-          patch "/boards/#{board.id}", params: params.to_json
-        }.not_to change { Board.last.name }
+          patch "/boards/#{user_board.id}", params: params(user_board)
+        }.not_to change { user_board.name }
 
         expect(response.status).to eq(401)
         expect(response.body).to be_empty
@@ -127,23 +131,29 @@ RSpec.describe "boards" do
     end
 
     context "when logged in" do
-      include_context "with a logged in user"
-
-      it "updates and returns the board" do
-        patch "/boards/#{board.id}", params: params.to_json, headers: headers
-
-        board = Board.last
+      it "allows updating a board belonging to the user" do
+        patch "/boards/#{user_board.id}", params: params(user_board), headers: headers
 
         expect(response.status).to eq(200)
-
-        response_body = JSON.parse(response.body)
         expect(response_body["data"]).to include({
           "type" => "boards",
-          "id" => board.id.to_s,
+          "id" => user_board.id.to_s,
           "attributes" => a_hash_including("name" => name)
         })
 
-        expect(Board.last.name).to eq(name)
+        expect(user_board.reload.name).to eq(name)
+      end
+
+      it "does not allow updating a board not belonging to the user" do
+        expect {
+          patch "/boards/#{other_user_board.id}", params: params(other_user_board), headers: headers
+        }.not_to change { other_user_board.name }
+
+        expect(response.status).to eq(404)
+        expect(response_body["errors"]).to include(a_hash_including(
+          "code" => "404",
+          "title" => "Record not found"
+        ))
       end
     end
   end
@@ -152,7 +162,7 @@ RSpec.describe "boards" do
     context "when logged out" do
       it "returns an auth error" do
         expect {
-          delete "/boards/#{board.id}"
+          delete "/boards/#{user_board.id}"
         }.not_to change { Board.count }
 
         expect(response.status).to eq(401)
@@ -161,15 +171,25 @@ RSpec.describe "boards" do
     end
 
     context "when logged in" do
-      include_context "with a logged in user"
-
-      it "deletes the board" do
-        delete "/boards/#{board.id}", headers: headers
+      it "allows deleting a board belonging to the user" do
+        delete "/boards/#{user_board.id}", headers: headers
 
         expect(response.status).to eq(204)
         expect(response.body).to be_empty
 
-        expect { Board.find(board.id) }.to raise_error(ActiveRecord::RecordNotFound)
+        expect { Board.find(user_board.id) }.to raise_error(ActiveRecord::RecordNotFound)
+      end
+
+      it "does not allow deleting a board not belonging to the user" do
+        expect {
+          delete "/boards/#{other_user_board.id}", headers: headers
+        }.not_to change { Board.count }
+
+        expect(response.status).to eq(404)
+        expect(response_body["errors"]).to include(a_hash_including(
+          "code" => "404",
+          "title" => "Record not found"
+        ))
       end
     end
   end
