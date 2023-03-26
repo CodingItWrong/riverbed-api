@@ -5,7 +5,7 @@ class User < ApplicationRecord
 
   has_many :api_keys
   has_many :boards
-  has_many :cards, through: :boards
+  has_many :cards
   has_many :columns, through: :boards
 
   validates :email, presence: true, uniqueness: true

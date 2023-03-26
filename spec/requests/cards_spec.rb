@@ -5,7 +5,7 @@ RSpec.describe "cards" do
 
   let!(:user_board) { FactoryBot.create(:board, user:) }
   let!(:user_field) { FactoryBot.create(:element, :field, board: user_board) }
-  let!(:user_card) { FactoryBot.create(:card, board: user_board) }
+  let!(:user_card) { FactoryBot.create(:card, board: user_board, user: user) }
 
   let!(:other_user_board) { FactoryBot.create(:board) }
   let!(:other_user_field) { FactoryBot.create(:element, :field, board: other_user_board) }
@@ -14,11 +14,15 @@ RSpec.describe "cards" do
 
   describe "GET /boards/:id/cards" do
     it "returns cards for a board belonging to the user" do
-      pending "query error"
       get "/boards/#{user_board.id}/cards", headers: headers
 
-      expect(response_body).to eq("hi")
       expect(response.status).to eq(200)
+      expect(response_body["data"]).to contain_exactly(
+        a_hash_including(
+          "type" => "cards",
+          "id" => user_card.id.to_s,
+        )
+      )
     end
 
     it "does not return cards for a board belonging to another user" do
@@ -71,7 +75,7 @@ RSpec.describe "cards" do
     end
 
     it "does not create a card on a board not belonging to the user" do
-      pending "figure out how to implement"
+      pending "can't see how to implement this constraint in JR"
       params = {
         data: {
           type: "cards",
@@ -85,9 +89,6 @@ RSpec.describe "cards" do
       expect {
         post "/cards", params: params.to_json, headers: headers
       }.not_to change { Card.count }
-
-      # TODO: what's the simple RJ way to constrain this?
-      # Surprising BoardResource.records doesn't
 
       expect(response.status).to eq(404)
     end

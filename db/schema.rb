@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_03_25_150501) do
+ActiveRecord::Schema[7.0].define(version: 2023_03_26_194031) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -29,7 +29,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_03_25_150501) do
     t.datetime "favorited_at"
     t.string "icon"
     t.string "color_theme"
-    t.bigint "user_id"
+    t.bigint "user_id", null: false
     t.index ["user_id"], name: "index_boards_on_user_id"
   end
 
@@ -38,7 +38,9 @@ ActiveRecord::Schema[7.0].define(version: 2023_03_25_150501) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.bigint "board_id", null: false
+    t.bigint "user_id", null: false
     t.index ["board_id"], name: "index_cards_on_board_id"
+    t.index ["user_id"], name: "index_cards_on_user_id"
   end
 
   create_table "columns", force: :cascade do |t|
@@ -123,6 +125,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_03_25_150501) do
   add_foreign_key "api_keys", "users"
   add_foreign_key "boards", "users"
   add_foreign_key "cards", "boards"
+  add_foreign_key "cards", "users"
   add_foreign_key "columns", "boards"
   add_foreign_key "elements", "boards"
   add_foreign_key "oauth_access_grants", "oauth_applications", column: "application_id"
