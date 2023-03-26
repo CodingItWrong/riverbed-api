@@ -20,7 +20,7 @@ RSpec.describe "cards" do
       expect(response_body["data"]).to contain_exactly(
         a_hash_including(
           "type" => "cards",
-          "id" => user_card.id.to_s,
+          "id" => user_card.id.to_s
         )
       )
     end

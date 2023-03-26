@@ -35,7 +35,7 @@ class ParseLinkJob < ApplicationJob
   def save_link(attributes)
     # Once this is extracted from the core API this will be a POST instead of a DB creation
     board.cards.create!(
-      user: board.user, # TODO: look up board by hard-coded ID so doesn't conflict with someone else's
+      :user => board.user, # TODO: look up board by hard-coded ID so doesn't conflict with someone else's
       "field_values" => {
         url_field.id => attributes[:url],
         title_field.id => attributes[:title],
