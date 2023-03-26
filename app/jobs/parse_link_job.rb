@@ -34,12 +34,15 @@ class ParseLinkJob < ApplicationJob
 
   def save_link(attributes)
     # Once this is extracted from the core API this will be a POST instead of a DB creation
-    board.cards.create!("field_values" => {
-      url_field.id => attributes[:url],
-      title_field.id => attributes[:title],
-      saved_at_field.id => Time.zone.now.iso8601,
-      read_status_changed_at_field.id => Time.zone.now.iso8601
-    })
+    board.cards.create!(
+      user: board.user, # TODO: look up board by hard-coded ID so doesn't conflict with someone else's
+      "field_values" => {
+        url_field.id => attributes[:url],
+        title_field.id => attributes[:title],
+        saved_at_field.id => Time.zone.now.iso8601,
+        read_status_changed_at_field.id => Time.zone.now.iso8601
+      }
+    )
   end
 
   def board = Board.find_by(name: "Links")
