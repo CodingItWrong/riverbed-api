@@ -5,7 +5,7 @@ class CardResource < ApplicationResource
 
   def self.records(options = {})
     user = current_user(options)
-    user.cards
+    Card.joins(board: :user).where("users.id": user.id)
   end
 
   def self.updatable_fields(context)

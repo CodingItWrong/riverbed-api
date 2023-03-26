@@ -13,8 +13,34 @@ RSpec.describe "cards" do
   let(:response_body) { JSON.parse(response.body) }
 
   describe "GET /boards/:id/cards" do
+    it "returns cards for a board belonging to the user" do
+      pending "query error"
+      get "/boards/#{user_board.id}/cards", headers: headers
+
+      expect(response_body).to eq("hi")
+      expect(response.status).to eq(200)
+    end
+
     it "does not return cards for a board belonging to another user" do
       get "/boards/#{other_user_board.id}/cards", headers: headers
+
+      expect(response.status).to eq(404)
+    end
+  end
+
+  describe "GET /cards/:id" do
+    it "returns a card for a board belonging to the user" do
+      get "/cards/#{user_card.id}", headers: headers
+
+      expect(response.status).to eq(200)
+      expect(response_body["data"]).to include(
+        "type" => "cards",
+        "id" => user_card.id.to_s
+      )
+    end
+
+    it "does not return a card for a board belonging to another user" do
+      get "/cards/#{other_user_card.id}", headers: headers
 
       expect(response.status).to eq(404)
     end
