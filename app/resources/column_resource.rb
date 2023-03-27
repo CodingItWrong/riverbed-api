@@ -14,16 +14,9 @@ class ColumnResource < ApplicationResource
     _model.user = current_user
   end
 
-  def self.records(options = {})
-    user = current_user(options)
-    user.columns
-  end
+  def self.records(options = {}) = current_user(options).columns
 
-  def self.creatable_fields(context)
-    super - [:user]
-  end
+  def self.creatable_fields(_context) = super - [:user]
 
-  def self.updatable_fields(context)
-    super - [:user, :board]
-  end
+  def self.updatable_fields(_context) = super - [:user, :board]
 end
