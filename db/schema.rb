@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_03_27_102521) do
+ActiveRecord::Schema[7.0].define(version: 2023_03_27_103302) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -71,7 +71,9 @@ ActiveRecord::Schema[7.0].define(version: 2023_03_27_102521) do
     t.jsonb "element_options", default: {}, null: false
     t.integer "initial_value"
     t.jsonb "show_conditions", default: [], null: false
+    t.bigint "user_id", null: false
     t.index ["board_id"], name: "index_elements_on_board_id"
+    t.index ["user_id"], name: "index_elements_on_user_id"
   end
 
   create_table "oauth_access_grants", force: :cascade do |t|
@@ -131,6 +133,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_03_27_102521) do
   add_foreign_key "columns", "boards"
   add_foreign_key "columns", "users"
   add_foreign_key "elements", "boards"
+  add_foreign_key "elements", "users"
   add_foreign_key "oauth_access_grants", "oauth_applications", column: "application_id"
   add_foreign_key "oauth_access_tokens", "oauth_applications", column: "application_id"
 end
