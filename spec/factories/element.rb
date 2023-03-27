@@ -1,5 +1,6 @@
 FactoryBot.define do
   factory :element do
+    user
     board
 
     trait :field do

@@ -6,9 +6,7 @@ class ApplicationController < ActionController::Base
 
   private
 
-  def context
-    {current_user: current_user}
-  end
+  def context = {current_user: current_user}
 
   def current_user
     @current_user ||= User.find(doorkeeper_token.resource_owner_id) if doorkeeper_token

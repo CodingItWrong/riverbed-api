@@ -1,5 +1,6 @@
 class Element < ApplicationRecord
   belongs_to :board
+  belongs_to :user # direct user reference necessary for JR
 
   enum :element_type,
     field: 0,
@@ -19,4 +20,5 @@ class Element < ApplicationRecord
     now: 1
 
   validates :element_type, presence: true
+  validates :board, belongs_to_user: true
 end
