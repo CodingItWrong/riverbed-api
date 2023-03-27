@@ -6,8 +6,9 @@ RSpec.describe "elements" do
   let!(:user_board) { FactoryBot.create(:board, user:) }
   let!(:user_element) { FactoryBot.create(:element, :field, board: user_board, user:) }
 
-  let!(:other_user_board) { FactoryBot.create(:board) }
-  let!(:other_user_element) { FactoryBot.create(:element, :field, board: other_user_board) }
+  let!(:other_user) { FactoryBot.create(:user) }
+  let!(:other_user_board) { FactoryBot.create(:board, user: other_user) }
+  let!(:other_user_element) { FactoryBot.create(:element, :field, board: other_user_board, user: other_user) }
   let(:response_body) { JSON.parse(response.body) }
 
   describe "GET /boards/:id/elements" do
@@ -58,7 +59,26 @@ RSpec.describe "elements" do
       })
     end
 
-    it "does not create an element on a board not belonging to the user"
+    it "does not create an element on a board not belonging to the user" do
+      params = {
+        data: {
+          type: "elements",
+          attributes: {"element-type" => "field"},
+          relationships: {
+            board: {data: {type: "boards", id: other_user_board.id}}
+          }
+        }
+      }
+
+      expect {
+        post "/elements", params: params.to_json, headers: headers
+      }.not_to change { Element.count }
+
+      expect(response.status).to eq(422)
+      expect(response_body["errors"]).to contain_exactly(
+        a_hash_including("detail" => "board - not found")
+      )
+    end
   end
 
   describe "PATCH /elements/:id" do

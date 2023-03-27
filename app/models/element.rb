@@ -20,4 +20,5 @@ class Element < ApplicationRecord
     now: 1
 
   validates :element_type, presence: true
+  validates :board, belongs_to_user: true
 end

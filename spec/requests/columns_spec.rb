@@ -6,8 +6,9 @@ RSpec.describe "columns" do
   let!(:user_board) { FactoryBot.create(:board, user:) }
   let!(:user_column) { FactoryBot.create(:column, board: user_board, user:) }
 
-  let!(:other_user_board) { FactoryBot.create(:board) }
-  let!(:other_user_column) { FactoryBot.create(:column, board: other_user_board) }
+  let!(:other_user) { FactoryBot.create(:user) }
+  let!(:other_user_board) { FactoryBot.create(:board, user: other_user) }
+  let!(:other_user_column) { FactoryBot.create(:column, board: other_user_board, user: other_user) }
   let(:response_body) { JSON.parse(response.body) }
 
   describe "GET /boards/:id/columns" do
@@ -54,7 +55,26 @@ RSpec.describe "columns" do
       })
     end
 
-    it "does not create a column on a board not belonging to the user"
+    it "does not create a column on a board not belonging to the user" do
+      params = {
+        data: {
+          type: "columns",
+          attributes: {},
+          relationships: {
+            board: {data: {type: "boards", id: other_user_board.id}}
+          }
+        }
+      }
+
+      expect {
+        post "/columns", params: params.to_json, headers: headers
+      }.not_to change { Column.count }
+
+      expect(response.status).to eq(422)
+      expect(response_body["errors"]).to contain_exactly(
+        a_hash_including("detail" => "board - not found")
+      )
+    end
   end
 
   describe "PATCH /columns/:id" do

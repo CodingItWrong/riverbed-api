@@ -9,12 +9,21 @@ RSpec.describe "custom links endpoint", type: :request do
   let(:url) { "https://example.com/blog/sample-post-title" }
   let(:headers) { {"Authorization" => "Bearer #{token}"} }
   let(:body) { {title: title, url: url} }
-  let(:api_key) { FactoryBot.create(:api_key) }
-  let(:board) { FactoryBot.create(:board, name: "Links") }
-  let!(:url_field) { FactoryBot.create(:element, :field, board:, name: "URL") }
-  let!(:title_field) { FactoryBot.create(:element, :field, board:, name: "Title") }
-  let!(:saved_at_field) { FactoryBot.create(:element, :field, board:, data_type: :datetime, name: "Saved At") }
-  let!(:read_status_changed_at_field) { FactoryBot.create(:element, :field, board:, data_type: :datetime, name: "Read Status Changed At") }
+  let(:user) { FactoryBot.create(:user) }
+  let(:api_key) { FactoryBot.create(:api_key, user:) }
+  let(:board) { FactoryBot.create(:board, name: "Links", user:) }
+  let!(:url_field) {
+    FactoryBot.create(:element, :field, board:, user:, name: "URL")
+  }
+  let!(:title_field) {
+    FactoryBot.create(:element, :field, board:, user:, name: "Title")
+  }
+  let!(:saved_at_field) {
+    FactoryBot.create(:element, :field, board:, user:, data_type: :datetime, name: "Saved At")
+  }
+  let!(:read_status_changed_at_field) {
+    FactoryBot.create(:element, :field, board:, user:, data_type: :datetime, name: "Read Status Changed At")
+  }
 
   let(:send!) { post custom_links_path, params: body, headers: headers }
 
