@@ -10,12 +10,20 @@ class ColumnResource < ApplicationResource
 
   relationship :board, to: :one
 
+  before_create do
+    _model.user = current_user
+  end
+
   def self.records(options = {})
     user = current_user(options)
     user.columns
   end
 
+  def self.creatable_fields(context)
+    super - [:user]
+  end
+
   def self.updatable_fields(context)
-    super - [:board]
+    super - [:user, :board]
   end
 end

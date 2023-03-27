@@ -4,13 +4,25 @@ RSpec.describe "columns" do
   include_context "with a logged in user"
 
   let!(:user_board) { FactoryBot.create(:board, user:) }
-  let!(:user_column) { FactoryBot.create(:column, board: user_board) }
+  let!(:user_column) { FactoryBot.create(:column, board: user_board, user:) }
 
   let!(:other_user_board) { FactoryBot.create(:board) }
   let!(:other_user_column) { FactoryBot.create(:column, board: other_user_board) }
   let(:response_body) { JSON.parse(response.body) }
 
   describe "GET /boards/:id/columns" do
+    it "returns columns for a board belonging to the user" do
+      get "/boards/#{user_board.id}/columns", headers: headers
+
+      expect(response.status).to eq(200)
+      expect(response_body["data"]).to contain_exactly(
+        a_hash_including(
+          "type" => "columns",
+          "id" => user_column.id.to_s
+        )
+      )
+    end
+
     it "does not return columns for a board belonging to another user" do
       get "/boards/#{other_user_board.id}/columns", headers: headers
 

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_03_26_194031) do
+ActiveRecord::Schema[7.0].define(version: 2023_03_27_102521) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -53,7 +53,9 @@ ActiveRecord::Schema[7.0].define(version: 2023_03_26_194031) do
     t.integer "display_order"
     t.jsonb "card_grouping", default: {}, null: false
     t.jsonb "summary", default: {}, null: false
+    t.bigint "user_id", null: false
     t.index ["board_id"], name: "index_columns_on_board_id"
+    t.index ["user_id"], name: "index_columns_on_user_id"
   end
 
   create_table "elements", force: :cascade do |t|
@@ -127,6 +129,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_03_26_194031) do
   add_foreign_key "cards", "boards"
   add_foreign_key "cards", "users"
   add_foreign_key "columns", "boards"
+  add_foreign_key "columns", "users"
   add_foreign_key "elements", "boards"
   add_foreign_key "oauth_access_grants", "oauth_applications", column: "application_id"
   add_foreign_key "oauth_access_tokens", "oauth_applications", column: "application_id"
