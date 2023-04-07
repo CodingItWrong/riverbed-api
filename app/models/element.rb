@@ -17,7 +17,8 @@ class Element < ApplicationRecord
 
   enum :initial_value,
     empty: 0,
-    now: 1
+    now: 1,
+    specific_value: 2
 
   validates :element_type, presence: true
   validates :board, belongs_to_user: true
