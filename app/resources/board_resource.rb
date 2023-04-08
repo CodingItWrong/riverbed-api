@@ -9,9 +9,20 @@ class BoardResource < ApplicationResource
     _model.user = current_user
   end
 
+  after_create do
+    create_initial_board_data
+  end
+
   def self.records(options = {}) = current_user(options).boards
 
   def self.creatable_fields(_context) = super - [:user]
 
   def self.updatable_fields(_context) = super - [:user]
+
+  private
+
+  def create_initial_board_data
+    _model.columns.create!(user: current_user, name: "All Cards")
+    _model.cards.create!(user: current_user)
+  end
 end
