@@ -88,13 +88,15 @@ RSpec.describe "boards" do
     end
 
     context "when logged in" do
-      it "creates and returns a board" do
+      it "creates a board, column, and card" do
         expect {
           post "/boards", params: params.to_json, headers: headers
         }.to change { Board.count }.by(1)
 
         board = Board.last
         expect(board.user).to eq(user)
+        expect(board.columns.map { _1.name }).to eq(["All Cards"])
+        expect(board.cards.count).to eq(1)
 
         expect(response.status).to eq(201)
         expect(response_body["data"]).to include({
