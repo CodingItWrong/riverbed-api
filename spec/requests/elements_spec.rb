@@ -147,5 +147,21 @@ RSpec.describe "elements" do
 
       expect(response.status).to eq(404)
     end
+
+    it "deletes values for the field from cards", :aggregate_failures do
+      other_element = FactoryBot.create(:element, :field, user:, board: user_board)
+      card1 = FactoryBot.create(:card, user:, board: user_board, field_values: {user_element.id.to_s => "field value", other_element.id.to_s => "other field value"})
+      card2 = FactoryBot.create(:card, user:, board: user_board, field_values: {user_element.id.to_s => "field value", other_element.id.to_s => "other field value"})
+
+      delete "/elements/#{user_element.id}", headers: headers
+
+      card1.reload
+      expect(card1.field_values).to have_key(other_element.id.to_s)
+      expect(card1.field_values).not_to have_key(user_element.id.to_s)
+
+      card2.reload
+      expect(card2.field_values).to have_key(other_element.id.to_s)
+      expect(card2.field_values).not_to have_key(user_element.id.to_s)
+    end
   end
 end

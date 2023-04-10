@@ -17,6 +17,18 @@ class ElementResource < ApplicationResource
     _model.user = current_user
   end
 
+  after_remove do
+    if _model.field?
+      key = _model.id.to_s
+      _model.board.cards.find_each do |card|
+        if card.field_values.has_key?(key)
+          card.field_values.delete(key)
+          card.save!
+        end
+      end
+    end
+  end
+
   def self.records(options = {}) = current_user(options).elements
 
   def self.creatable_fields(_context) = super - [:user]
