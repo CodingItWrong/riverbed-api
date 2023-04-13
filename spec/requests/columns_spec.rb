@@ -31,6 +31,24 @@ RSpec.describe "columns" do
     end
   end
 
+  describe "GET /columns/:id" do
+    it "returns a column for a board belonging to the user" do
+      get "/columns/#{user_column.id}", headers: headers
+
+      expect(response.status).to eq(200)
+      expect(response_body["data"]).to include(
+        "type" => "columns",
+        "id" => user_column.id.to_s
+      )
+    end
+
+    it "does not return a column for a board belonging to another user" do
+      get "/columns/#{other_user_column.id}", headers: headers
+
+      expect(response.status).to eq(404)
+    end
+  end
+
   describe "POST /columns" do
     it "creates a column on a board belonging to the user" do
       params = {
