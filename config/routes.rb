@@ -12,7 +12,7 @@ Rails.application.routes.draw do
   end
 
   jsonapi_resources :cards, only: %w[show create update destroy]
-  jsonapi_resources :columns, only: %w[create update destroy]
+  jsonapi_resources :columns, only: %w[show create update destroy]
   jsonapi_resources :elements, only: %w[create update destroy]
 
   # custom integrations that will ultimately be separate APIs that use this API's public interface
