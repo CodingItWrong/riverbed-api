@@ -31,6 +31,24 @@ RSpec.describe "elements" do
     end
   end
 
+  describe "GET /elements/:id" do
+    it "returns an element for a board belonging to the user" do
+      get "/elements/#{user_element.id}", headers: headers
+
+      expect(response.status).to eq(200)
+      expect(response_body["data"]).to include(
+        "type" => "elements",
+        "id" => user_element.id.to_s
+      )
+    end
+
+    it "does not return columns for a board belonging to another user" do
+      get "/elements/#{other_user_element.id}", headers: headers
+
+      expect(response.status).to eq(404)
+    end
+  end
+
   describe "POST /elements" do
     it "creates an element on a board belonging to the user" do
       params = {
