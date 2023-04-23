@@ -156,6 +156,51 @@ RSpec.describe "cards" do
       expect(response.status).to eq(400)
       expect(user_card.reload.board).to eq(user_board)
     end
+
+    context "when a card-update webhook is defined" do
+      let(:webhook_board) {
+        FactoryBot.create(:board, user:, board_options: {
+          "webhooks" => {
+            "card-update": "https://example.com/webhooks/test"
+          }
+        })
+      }
+      let!(:webhook_field) {
+        FactoryBot.create(:element, :field, board: webhook_board, user:)
+      }
+      let(:webhook_card) {
+        FactoryBot.create(:card, board: webhook_board, user:)
+      }
+
+      it "updates the card with the values returned by the webhook" do
+        stub_request(:patch, "https://example.com/webhooks/test/#{webhook_card.id}")
+          .to_return(body: {
+            webhook_field.id.to_s => "Updated Value"
+          }.to_json)
+
+        params = {
+          data: {
+            type: "cards",
+            id: webhook_card.id.to_s,
+            attributes: {
+              "field-values" => {
+                webhook_field.id.to_s => "Original Value"
+              }
+            }
+          }
+        }
+
+        patch "/cards/#{webhook_card.id}", params: params.to_json, headers: headers
+
+        expect(response.status).to eq(200)
+        expect(response_body["data"]["attributes"]["field-values"]).to eq(
+          webhook_field.id.to_s => "Updated Value"
+        )
+
+        webhook_card.reload
+        expect(webhook_card.field_values[webhook_field.id.to_s]).to eql("Updated Value")
+      end
+    end
   end
 
   describe "DELETE /cards/:id" do
