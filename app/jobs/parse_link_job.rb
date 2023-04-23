@@ -11,7 +11,13 @@ class ParseLinkJob < ApplicationJob
       title: link_params[:title]
     }
 
-    save_link(attributes)
+    card = save_link(attributes)
+
+    # TODO: rework the code so we can get the attributes before saving the card
+    field_values_to_update = WebhookClient.new("card-create").call(card)
+    if field_values_to_update.present?
+      card.update!(field_values: card.field_values.merge(field_values_to_update))
+    end
   end
 
   private
