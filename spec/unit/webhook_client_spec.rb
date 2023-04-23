@@ -3,7 +3,7 @@ require "rails_helper"
 require "webhook_client"
 
 RSpec.describe WebhookClient do
-  describe "#card_update" do
+  describe "#call" do
     let(:user) { FactoryBot.create(:user) }
     let(:board) { FactoryBot.create(:board, user:, board_options:) }
     let(:field) { FactoryBot.create(:element, :field, user:, board:) }
@@ -17,7 +17,7 @@ RSpec.describe WebhookClient do
       let(:board_options) { {} }
 
       it "does not make a request to the webhook" do
-        result = WebhookClient.new.card_update(card)
+        result = WebhookClient.new("card-update").call(card)
 
         expect(result).to be_nil
       end
@@ -45,7 +45,7 @@ RSpec.describe WebhookClient do
             field.id.to_s => "Updated Value"
           }.to_json)
 
-        result = WebhookClient.new.card_update(card)
+        result = WebhookClient.new("card-update").call(card)
 
         expect(result).to eq(
           field.id.to_s => "Updated Value"
