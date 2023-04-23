@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_03_27_103302) do
+ActiveRecord::Schema[7.0].define(version: 2023_04_22_223755) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -30,6 +30,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_03_27_103302) do
     t.string "icon"
     t.string "color_theme"
     t.bigint "user_id", null: false
+    t.jsonb "board_options", default: {}, null: false
     t.index ["user_id"], name: "index_boards_on_user_id"
   end
 
