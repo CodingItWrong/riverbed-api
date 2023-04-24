@@ -9,8 +9,10 @@ RSpec.describe "iOS share endpoint", type: :request do
   let(:body) { {title: title, url: url} }
   let(:user) { FactoryBot.create(:user) }
   let(:api_key) { FactoryBot.create(:api_key, user:) }
-  let(:board) { FactoryBot.create(:board, name: "Links", user:, board_options:) }
-  let(:board_options) { {} }
+  let(:board) {
+    FactoryBot.create(:board, name: "Links", user:)
+  }
+  let(:webhooks) { {} }
   let!(:url_field) {
     FactoryBot.create(:element, :field, board:, user:, name: "URL")
   }
@@ -23,6 +25,16 @@ RSpec.describe "iOS share endpoint", type: :request do
   let!(:read_status_changed_at_field) {
     FactoryBot.create(:element, :field, board:, user:, data_type: :datetime, name: "Read Status Changed At")
   }
+
+  before(:each) do
+    board.update!(board_options: {
+      "share" => {
+        "url-field" => url_field.id.to_s,
+        "title-field" => title_field.id.to_s
+      },
+      "webhooks" => webhooks
+    })
+  end
 
   def send!
     post shares_path, params: body, headers: headers
@@ -60,13 +72,7 @@ RSpec.describe "iOS share endpoint", type: :request do
     end
 
     context "with a webhook configured" do
-      let(:board_options) {
-        {
-          "webhooks" => {
-            "card-create": "https://example.com/webhooks/test"
-          }
-        }
-      }
+      let(:webhooks) { {"card-create": "https://example.com/webhooks/test"} }
 
       let(:title) { "custom title" }
       let(:now) { Time.zone.now.iso8601 }

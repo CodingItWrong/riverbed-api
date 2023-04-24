@@ -46,7 +46,7 @@ class SharesController < ActionController::Base
 
   def field_by_name(name) = board.elements.find_by(element_type: :field, name:)
 
-  def url_field = field_by_name("URL")
+  def url_field = board.elements.find_by(id: board.board_options["share"]["url-field"])
 
-  def title_field = field_by_name("Title")
+  def title_field = board.elements.find_by(id: board.board_options["share"]["title-field"])
 end
