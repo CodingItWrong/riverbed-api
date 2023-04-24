@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 Rails.application.routes.draw do
   use_doorkeeper
 
@@ -15,8 +13,6 @@ Rails.application.routes.draw do
   jsonapi_resources :columns, only: %w[show create update destroy]
   jsonapi_resources :elements, only: %w[show create update destroy]
 
-  # custom integrations that will ultimately be separate APIs that use this API's public interface
-  namespace :custom do
-    resources :links, only: %w[create]
-  end
+  # iOS share integration
+  resources :shares, only: %w[create]
 end

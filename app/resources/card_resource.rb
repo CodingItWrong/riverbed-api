@@ -22,7 +22,7 @@ class CardResource < ApplicationResource
   private
 
   def update_card_from_webhook
-    field_values_to_update = WebhookClient.new.card_update(_model)
+    field_values_to_update = WebhookClient.new("card-update").call(_model)
     if field_values_to_update.present?
       _model.update!(field_values: _model.field_values.merge(field_values_to_update))
     end

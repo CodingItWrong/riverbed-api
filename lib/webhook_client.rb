@@ -1,6 +1,10 @@
 class WebhookClient
-  def card_update(card)
-    url = card.board.board_options.dig("webhooks", "card-update")
+  def initialize(webhook_name)
+    @webhook_name = webhook_name
+  end
+
+  def call(card)
+    url = card.board.board_options.dig("webhooks", webhook_name)
     return if url.blank?
 
     body = {
@@ -18,6 +22,8 @@ class WebhookClient
   end
 
   private
+
+  attr_reader :webhook_name
 
   def httparty = HTTParty
 
