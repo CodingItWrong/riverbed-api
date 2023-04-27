@@ -1,6 +1,6 @@
-# List App
+# Riverbed API
 
-This is a short description of your app.
+Backend API for Riverbed, an app for creating CRUD apps with interactivity with no programming.
 
 ## Getting Started
 
@@ -57,3 +57,7 @@ $ bin/serve
 This opens ports so can be accessed from physical devices.
 
 [postgres-app]: http://postgresapp.com
+
+## License
+
+MIT
