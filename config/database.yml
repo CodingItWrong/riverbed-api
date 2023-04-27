@@ -80,4 +80,6 @@ test:
 # for a full overview on how database connection configuration can be specified.
 #
 production:
-  <<: *default
+  database: list_app_production
+  username: riverbed
+  password: <%= ENV["RIVERBED_DATABASE_PASSWORD"] %>
