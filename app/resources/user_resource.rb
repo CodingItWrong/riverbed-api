@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 class UserResource < ApplicationResource
-  attributes :email, :password
+  attributes :ios_share_board_id
 end

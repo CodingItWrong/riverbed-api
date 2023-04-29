@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 class User < ApplicationRecord
   has_secure_password
 
@@ -8,6 +6,7 @@ class User < ApplicationRecord
   has_many :cards
   has_many :columns
   has_many :elements
+  belongs_to :ios_share_board, class_name: "Board", optional: true
 
   validates :email, presence: true, uniqueness: true
 end
