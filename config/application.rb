@@ -38,5 +38,11 @@ module Riverbed
 
     # gives us the flexibility to queue later, but determinism now
     config.active_job.queue_adapter = :inline
+
+    config.autoload_paths << "#{Rails.root}/lib"
+
+    config.after_initialize do
+      require "custom_token_response"
+    end
   end
 end

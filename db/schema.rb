@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_04_22_223755) do
+ActiveRecord::Schema[7.0].define(version: 2023_04_29_114347) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -124,7 +124,9 @@ ActiveRecord::Schema[7.0].define(version: 2023_04_22_223755) do
     t.string "password_digest"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "ios_share_board_id"
     t.index ["email"], name: "index_users_on_email", unique: true
+    t.index ["ios_share_board_id"], name: "index_users_on_ios_share_board_id"
   end
 
   add_foreign_key "api_keys", "users"
@@ -137,4 +139,5 @@ ActiveRecord::Schema[7.0].define(version: 2023_04_22_223755) do
   add_foreign_key "elements", "users"
   add_foreign_key "oauth_access_grants", "oauth_applications", column: "application_id"
   add_foreign_key "oauth_access_tokens", "oauth_applications", column: "application_id"
+  add_foreign_key "users", "boards", column: "ios_share_board_id"
 end
