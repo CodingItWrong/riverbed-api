@@ -42,7 +42,7 @@ class SharesController < ActionController::Base
     params.permit(:url, :title)
   end
 
-  def board = user_for_api_key.boards.find_by(name: "Links")
+  def board = user_for_api_key.ios_share_board
 
   def field_by_name(name) = board.elements.find_by(element_type: :field, name:)
 

@@ -10,7 +10,7 @@ RSpec.describe "iOS share endpoint", type: :request do
   let(:user) { FactoryBot.create(:user) }
   let(:api_key) { FactoryBot.create(:api_key, user:) }
   let(:board) {
-    FactoryBot.create(:board, name: "Links", user:)
+    FactoryBot.create(:board, name: "Custom Share Board", user:)
   }
   let(:webhooks) { {} }
   let!(:url_field) {
@@ -27,6 +27,7 @@ RSpec.describe "iOS share endpoint", type: :request do
   }
 
   before(:each) do
+    user.update!(ios_share_board: board)
     board.update!(board_options: {
       "share" => {
         "url-field" => url_field.id.to_s,
