@@ -30,7 +30,9 @@ RSpec.describe "users" do
         expect(response_body["data"]).to include(
           "type" => "users",
           "id" => user.id.to_s,
-          "attributes" => a_hash_including("ios-share-board-id" => board.id)
+          "attributes" => {
+            "ios-share-board-id" => board.id
+          }
         )
       end
 
