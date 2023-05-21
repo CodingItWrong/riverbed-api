@@ -302,6 +302,76 @@ def create_todos!(user)
 end
 # standard:enable Lint/UselessAssignment
 
+def create_field_samples!(user)
+  board = user.boards.create!(name: "Field Samples")
+
+  text_single_line = user.elements.create!(board:,
+    element_type: :field,
+    data_type: :text,
+    name: "Text - Single Line",
+    show_in_summary: true).id.to_s
+  text_multi_line = user.elements.create!(board:,
+    element_type: :field,
+    data_type: :text,
+    name: "Text - Multiline",
+    show_in_summary: true,
+    element_options: {"multiline" => true}).id.to_s
+  number = user.elements.create!(board:,
+    element_type: :field,
+    data_type: :number,
+    name: "Number",
+    show_in_summary: true).id.to_s
+  date = user.elements.create!(board:,
+    element_type: :field,
+    data_type: :date,
+    name: "Date",
+    show_in_summary: true).id.to_s
+  datetime = user.elements.create!(board:,
+    element_type: :field,
+    data_type: :datetime,
+    name: "Datetime",
+    show_in_summary: true).id.to_s
+  choice_a = "fake_uuid_11"
+  choice = user.elements.create!(board:,
+    element_type: :field,
+    data_type: :choice,
+    name: "Choice",
+    show_in_summary: true,
+    element_options: {"choices" => [
+      {id: choice_a, label: "Choice A"},
+      {id: "fake_uuid_12", label: "Choice B"},
+      {id: "fake_uuid_13", label: "Choice C"}
+    ]}).id.to_s
+  geolocation = user.elements.create!(board:,
+    element_type: :field,
+    data_type: :geolocation,
+    name: "Geolocation",
+    show_in_summary: true).id.to_s
+  user.elements.create!(board:,
+    element_type: :button,
+    name: "Button")
+  user.elements.create!(board:,
+    element_type: :button_menu,
+    name: "Button Menu",
+    element_options: {items: [
+      {name: "Option 1", actions: []},
+      {name: "Option 2", actions: []}
+    ]})
+
+  user.columns.create!(board:, name: "All")
+
+  user.cards.create!(board:, field_values: {
+    text_single_line => "Short Sample",
+    text_multi_line => "This is a significantly longer sample that should wrap to multiple lines on any width",
+    number => "39.99",
+    date => "2023-01-01",
+    datetime => "2023-01-01T12:34:56Z",
+    choice => choice_a,
+    geolocation => {"lat" => "33.857327", "lng" => "-84.019913"}
+  })
+end
+
 create_life_log!(user)
 create_links!(user)
 create_todos!(user)
+create_field_samples!(user)
