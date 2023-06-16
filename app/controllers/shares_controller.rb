@@ -1,5 +1,5 @@
-class SharesController < ActionController::Base
-  before_action :verify_api_key
+class SharesController < ApplicationController
+  before_action :doorkeeper_authorize!
 
   def create
     attributes = {
@@ -8,7 +8,7 @@ class SharesController < ActionController::Base
     }
 
     card = board.cards.create!(
-      :user => user_for_api_key,
+      :user => current_user,
       "field_values" => {
         url_field.id => attributes[:url],
         title_field.id => attributes[:title]
@@ -26,23 +26,11 @@ class SharesController < ActionController::Base
 
   private
 
-  def user_for_api_key
-    provided_header = request.headers["HTTP_AUTHORIZATION"]
-    return nil unless provided_header.present?
-
-    key = provided_header.gsub(/^Bearer /i, "")
-    ApiKey.find_by(key:)&.user
-  end
-
-  def verify_api_key
-    head :unauthorized unless user_for_api_key.present?
-  end
-
   def link_params
     params.permit(:url, :title)
   end
 
-  def board = user_for_api_key.ios_share_board
+  def board = current_user.ios_share_board
 
   def field_by_name(name) = board.elements.find_by(element_type: :field, name:)
 
