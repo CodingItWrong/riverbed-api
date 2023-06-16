@@ -2,13 +2,19 @@ require "rails_helper"
 require "link_parser"
 
 RSpec.describe "iOS share endpoint", type: :request do
+  include_context "with a logged in user"
   include ActiveSupport::Testing::TimeHelpers
 
+  let(:headers) do
+    {
+      "Authorization" => "Bearer #{token}",
+      "Content-Type" => "application/json"
+    }
+  end
+
   let(:url) { "https://example.com/blog/sample-post-title" }
-  let(:headers) { {"Authorization" => "Bearer #{token}"} }
   let(:body) { {title: title, url: url} }
   let(:user) { FactoryBot.create(:user) }
-  let(:api_key) { FactoryBot.create(:api_key, user:) }
   let(:board) {
     FactoryBot.create(:board, name: "Custom Share Board", user:)
   }
@@ -38,7 +44,7 @@ RSpec.describe "iOS share endpoint", type: :request do
   end
 
   def send!
-    post shares_path, params: body, headers: headers
+    post shares_path, params: body.to_json, headers: headers
   end
 
   context "with incorrect API token" do
@@ -56,8 +62,6 @@ RSpec.describe "iOS share endpoint", type: :request do
   end
 
   context "with correct API token" do
-    let(:token) { api_key.key }
-
     context "with no webhook configured" do
       let(:title) { "custom title" }
 
