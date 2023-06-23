@@ -357,6 +357,42 @@ def create_field_samples!(user)
       {name: "Option 1", actions: []},
       {name: "Option 2", actions: []}
     ]})
+  text_size_1 = user.elements.create!(board:,
+    element_type: :field,
+    data_type: :text,
+    name: "Text Size 1",
+    show_in_summary: true,
+    element_options: {"text-size" => "titleLarge"}).id.to_s
+  text_size_2 = user.elements.create!(board:,
+    element_type: :field,
+    data_type: :text,
+    name: "Text Size 1",
+    show_in_summary: true,
+    element_options: {"text-size" => "titleMedium"}).id.to_s
+  text_size_3 = user.elements.create!(board:,
+    element_type: :field,
+    data_type: :text,
+    name: "Text Size 1",
+    show_in_summary: true,
+    element_options: {"text-size" => "titleSmall"}).id.to_s
+  text_size_4 = user.elements.create!(board:,
+    element_type: :field,
+    data_type: :text,
+    name: "Text Size 1",
+    show_in_summary: true,
+    element_options: {"text-size" => "bodyLarge"}).id.to_s
+  text_size_5 = user.elements.create!(board:,
+    element_type: :field,
+    data_type: :text,
+    name: "Text Size 1",
+    show_in_summary: true,
+    element_options: {"text-size" => "bodyMedium"}).id.to_s
+  text_size_6 = user.elements.create!(board:,
+    element_type: :field,
+    data_type: :text,
+    name: "Text Size 1",
+    show_in_summary: true,
+    element_options: {"text-size" => "bodySmall"}).id.to_s
 
   user.columns.create!(board:, name: "All")
 
@@ -367,7 +403,13 @@ def create_field_samples!(user)
     date => "2023-01-01",
     datetime => "2023-01-01T12:34:56Z",
     choice => choice_a,
-    geolocation => {"lat" => "33.857327", "lng" => "-84.019913"}
+    geolocation => {"lat" => "33.857327", "lng" => "-84.019913"},
+    text_size_1 => "Text Size 1",
+    text_size_2 => "Text Size 2",
+    text_size_3 => "Text Size 3",
+    text_size_4 => "Text Size 4",
+    text_size_5 => "Text Size 5",
+    text_size_6 => "Text Size 6"
   })
 end
 

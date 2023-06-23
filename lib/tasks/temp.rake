@@ -5,23 +5,26 @@ namespace :temp do
   end
 
   desc "Migrates icons to new names"
-  task migrate_icons: [:environment] do
-    icon_mapping = {
-      "bed-king-outline" => "bed",
-      "book-open-outline" => "book",
-      "chart-timeline" => "chart",
-      "checkbox-outline" => "checkbox",
-      "gamepad-variant" => "gamepad",
-      "scale-bathroom" => "scale"
+  task migrate_text_sizes: [:environment] do
+    text_size_mapping = {
+      "titleLarge" => 1,
+      "titleMedium" => 2,
+      "titleSmall" => 3,
+      "bodyLarge" => 4,
+      "bodyMedium" => 5,
+      "bodySmall" => 6
     }
 
-    Board.all.each do |board|
-      if icon_mapping.has_key?(board.icon)
-        new_icon = icon_mapping[board.icon]
-        print "Updating #{board.name} from #{board.icon} to #{new_icon}\n"
-        board.update!(icon: new_icon)
+    Element.all.each do |element|
+      old_size = element.element_options["text-size"]
+      if old_size.present?
+        new_size = text_size_mapping[old_size]
+        print "Updating Element #{element.id} from #{old_size} to #{new_size}\n"
+        element_options = element.element_options
+        element_options["text-size"] = new_size
+        element.update!(element_options:)
       else
-        print "Not updating #{board.name} with icon #{board.icon}\n"
+        print "Not updating #{element.id}\n"
       end
     end
   end
