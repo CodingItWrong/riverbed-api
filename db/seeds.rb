@@ -426,7 +426,7 @@ def create_field_samples!(user)
     text_multi_line => "This is a significantly longer sample that should wrap to multiple lines on any width",
     number => "39.99",
     date => "2023-01-01",
-    datetime => "2023-01-01T12:34:56Z",
+    datetime => "2023-01-01T12:34:56.000Z",
     choice => choice_a,
     geolocation => {"lat" => "33.857327", "lng" => "-84.019913"},
     text_size_1 => "Text Size 1",
