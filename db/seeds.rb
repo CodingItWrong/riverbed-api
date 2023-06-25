@@ -7,7 +7,11 @@ def format_date(date) = date.strftime("%Y-%m-%d")
 
 # standard:disable Lint/UselessAssignment
 def create_life_log!(user)
-  board = user.boards.create!(name: "Life Log", icon: "map-marker")
+  board = user.boards.create!(
+    name: "Life Log",
+    icon: "map-marker",
+    color_theme: "blue"
+  )
 
   location = user.elements.create!(board:,
     display_order: 1,
@@ -68,7 +72,11 @@ def create_life_log!(user)
 end
 
 def create_links!(user)
-  board = user.boards.create!(name: "Links", icon: "link")
+  board = user.boards.create!(
+    name: "Links",
+    icon: "link",
+    color_theme: "red"
+  )
 
   title = user.elements.create!(board:,
     display_order: 1,
@@ -187,7 +195,11 @@ def create_links!(user)
 end
 
 def create_todos!(user)
-  board = user.boards.create!(name: "To Dos", icon: "checkbox")
+  board = user.boards.create!(
+    name: "To Dos",
+    icon: "checkbox",
+    color_theme: "green"
+  )
 
   name = user.elements.create!(board:,
     display_order: 1,
