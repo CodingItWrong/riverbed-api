@@ -387,37 +387,37 @@ def create_field_samples!(user)
     data_type: :text,
     name: "Text Size 1",
     show_in_summary: true,
-    element_options: {"text-size" => "titleLarge"}).id.to_s
+    element_options: {"text-size" => 1}).id.to_s
   text_size_2 = user.elements.create!(board:,
     element_type: :field,
     data_type: :text,
     name: "Text Size 2",
     show_in_summary: true,
-    element_options: {"text-size" => "titleMedium"}).id.to_s
+    element_options: {"text-size" => 2}).id.to_s
   text_size_3 = user.elements.create!(board:,
     element_type: :field,
     data_type: :text,
     name: "Text Size 3",
     show_in_summary: true,
-    element_options: {"text-size" => "titleSmall"}).id.to_s
+    element_options: {"text-size" => 3}).id.to_s
   text_size_4 = user.elements.create!(board:,
     element_type: :field,
     data_type: :text,
     name: "Text Size 4",
     show_in_summary: true,
-    element_options: {"text-size" => "bodyLarge"}).id.to_s
+    element_options: {"text-size" => 4}).id.to_s
   text_size_5 = user.elements.create!(board:,
     element_type: :field,
     data_type: :text,
     name: "Text Size 5",
     show_in_summary: true,
-    element_options: {"text-size" => "bodyMedium"}).id.to_s
+    element_options: {"text-size" => 5}).id.to_s
   text_size_6 = user.elements.create!(board:,
     element_type: :field,
     data_type: :text,
     name: "Text Size 6",
     show_in_summary: true,
-    element_options: {"text-size" => "bodySmall"}).id.to_s
+    element_options: {"text-size" => 6}).id.to_s
 
   user.columns.create!(board:, name: "All")
 
