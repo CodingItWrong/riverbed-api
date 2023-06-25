@@ -81,7 +81,11 @@ def create_links!(user)
     element_type: :field,
     data_type: :text,
     name: "URL",
-    show_in_summary: true).id.to_s
+    show_in_summary: true,
+    element_options: {
+      "link-urls" => true,
+      "abbrevieate-urls" => true
+    }).id.to_s
   source = user.elements.create!(board:,
     display_order: 3,
     element_type: :field,
@@ -171,6 +175,15 @@ def create_links!(user)
     url => "https://necolas.github.io/react-native-web/",
     read_status_changed_at => format_date(1.week.ago)
   })
+
+  board.update!(board_options: {
+    "share" => {
+      "url-field" => url,
+      "title-field" => title
+    }
+  })
+
+  board
 end
 
 def create_todos!(user)
@@ -414,6 +427,8 @@ def create_field_samples!(user)
 end
 
 create_life_log!(user)
-create_links!(user)
+link_board = create_links!(user)
 create_todos!(user)
 create_field_samples!(user)
+
+user.update!(ios_share_board: link_board)
