@@ -4,27 +4,26 @@ namespace :temp do
     print "hello\n"
   end
 
-  desc "Migrates icons to new names"
-  task migrate_text_sizes: [:environment] do
-    text_size_mapping = {
-      "titleLarge" => 1,
-      "titleMedium" => 2,
-      "titleSmall" => 3,
-      "bodyLarge" => 4,
-      "bodyMedium" => 5,
-      "bodySmall" => 6
-    }
+  desc "Migrates ADD_DAYS commands to new data structure"
+  task migrate_add_days: [:environment] do
+    Element.where(element_type: :button_menu).map do |button_menu|
+      changed = false
+      button_menu.element_options["items"].each do |item|
+        item["actions"].each_with_index do |action, index|
+          if action["command"] == "ADD_DAYS"
+            action["specific-value"] = action["value"]
+            action.delete("value")
+            changed = true
+            print "Updating action #{index} for item '#{item["name"]}' for button menu #{button_menu.name}\n"
+          else
+            print "Not updating action #{index} for item '#{item["name"]}' for button menu #{button_menu.name} because it is a #{action["command"]}\n"
+          end
+        end
+      end
 
-    Element.all.each do |element|
-      old_size = element.element_options["text-size"]
-      if old_size.present?
-        new_size = text_size_mapping[old_size]
-        print "Updating Element #{element.id} from #{old_size} to #{new_size}\n"
-        element_options = element.element_options
-        element_options["text-size"] = new_size
-        element.update!(element_options:)
-      else
-        print "Not updating #{element.id}\n"
+      if changed
+        print "Saving button menu #{button_menu.name}\n"
+        button_menu.save!
       end
     end
   end
