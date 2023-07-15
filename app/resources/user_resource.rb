@@ -4,6 +4,6 @@ class UserResource < ApplicationResource
   def fetchable_fields = super - [:email, :password]
 
   def self.records(options = {})
-    User.where(id: current_user(options).id)
+    User.where(id: current_user(options)&.id)
   end
 end
