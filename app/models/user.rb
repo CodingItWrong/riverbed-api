@@ -8,6 +8,13 @@ class User < ApplicationRecord
   has_many :elements
   belongs_to :ios_share_board, class_name: "Board", optional: true
 
-  validates :email, presence: true, uniqueness: true
+  validates :email,
+    presence: true,
+    uniqueness: true,
+    format: {
+      with: /\A[^@\s]+@([^@\s]+\.)+[^@\s]+\z/,
+      message: "must be a valid email address"
+    }
+
   validates :allow_emails, exclusion: [nil]
 end

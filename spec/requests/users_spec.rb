@@ -71,6 +71,33 @@ RSpec.describe "users" do
 
       expect(response.status).to eq(201)
     end
+
+    it "does basic email format validation" do
+      email = "nope"
+      password = "mypassword"
+
+      params = {
+        data: {
+          type: "users",
+          attributes: {
+            "email" => email,
+            "password" => password,
+            "allow-emails" => true
+          }
+        }
+      }
+
+      expect {
+        post "/users", params: params.to_json, headers: headers
+      }.not_to change { User.count }
+
+      expect(response.status).to eq(422)
+      expect(response_body["errors"]).to contain_exactly(
+        a_hash_including(
+          "detail" => "email - must be a valid email address"
+        )
+      )
+    end
   end
 
   describe "PATCH /users/:id" do
