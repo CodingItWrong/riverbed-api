@@ -9,4 +9,5 @@ class User < ApplicationRecord
   belongs_to :ios_share_board, class_name: "Board", optional: true
 
   validates :email, presence: true, uniqueness: true
+  validates :allow_emails, exclusion: [nil]
 end

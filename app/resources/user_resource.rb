@@ -1,5 +1,5 @@
 class UserResource < ApplicationResource
-  attributes :email, :password, :ios_share_board_id
+  attributes :email, :password, :allow_emails, :ios_share_board_id
 
   def fetchable_fields = super - [:email, :password]
 

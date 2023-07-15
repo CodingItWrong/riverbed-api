@@ -31,6 +31,7 @@ RSpec.describe "users" do
           "type" => "users",
           "id" => user.id.to_s,
           "attributes" => {
+            "allow-emails" => false,
             "ios-share-board-id" => board.id
           }
         )
@@ -57,8 +58,9 @@ RSpec.describe "users" do
         data: {
           type: "users",
           attributes: {
-            email: email,
-            password: password
+            "email" => email,
+            "password" => password,
+            "allow-emails" => true
           }
         }
       }
@@ -78,7 +80,8 @@ RSpec.describe "users" do
           type: "users",
           id: user.id.to_s,
           attributes: {
-            "ios-share-board-id": other_board.id
+            "allow-emails" => true,
+            "ios-share-board-id" => other_board.id
           }
         }
       }.to_json
@@ -96,7 +99,7 @@ RSpec.describe "users" do
     end
 
     context "when logged in" do
-      it "allows updating a board belonging to the user" do
+      it "allows updating attributes" do
         patch "/users/#{user.id}", params: params(user), headers: headers
 
         expect(response.status).to eq(200)
@@ -108,7 +111,9 @@ RSpec.describe "users" do
           )
         })
 
-        expect(user.reload.ios_share_board).to eq(other_board)
+        user.reload
+        expect(user.allow_emails).to eq(true)
+        expect(user.ios_share_board).to eq(other_board)
       end
 
       it "does not allow updating a board not belonging to the user" do
