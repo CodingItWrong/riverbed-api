@@ -58,7 +58,7 @@ This opens ports so can be accessed from physical devices.
 
 [postgres-app]: http://postgresapp.com
 
-## License
+## Copyright and License
 
 Copyright 2023 NeedBee, LLC.
 
