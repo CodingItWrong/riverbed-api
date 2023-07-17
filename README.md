@@ -1,6 +1,6 @@
 # Riverbed API
 
-Backend API for Riverbed, an app for creating CRUD apps with interactivity with no programming.
+Backend API for Riverbed, an app for creating interactive CRUD apps with no programming.
 
 ## Getting Started
 
