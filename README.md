@@ -60,4 +60,6 @@ This opens ports so can be accessed from physical devices.
 
 ## License
 
-MIT
+Copyright 2023 NeedBee, LLC.
+
+Licensed under GNU Affero General Public License (GNU AGPL) version 3. See LICENSE.md for details.
