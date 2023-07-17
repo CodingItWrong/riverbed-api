@@ -10,7 +10,7 @@ gem "jsonapi-resources"
 gem "bcrypt"
 gem "doorkeeper"
 
-# for temporary link parsing
+# for web hooks
 gem "httparty"
 
 group :development do
