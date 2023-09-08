@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_07_15_091640) do
+ActiveRecord::Schema[7.0].define(version: 2023_09_08_101256) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -131,13 +131,13 @@ ActiveRecord::Schema[7.0].define(version: 2023_07_15_091640) do
   end
 
   add_foreign_key "api_keys", "users"
-  add_foreign_key "boards", "users"
+  add_foreign_key "boards", "users", on_delete: :cascade
   add_foreign_key "cards", "boards"
-  add_foreign_key "cards", "users"
+  add_foreign_key "cards", "users", on_delete: :cascade
   add_foreign_key "columns", "boards"
-  add_foreign_key "columns", "users"
+  add_foreign_key "columns", "users", on_delete: :cascade
   add_foreign_key "elements", "boards"
-  add_foreign_key "elements", "users"
+  add_foreign_key "elements", "users", on_delete: :cascade
   add_foreign_key "oauth_access_grants", "oauth_applications", column: "application_id"
   add_foreign_key "oauth_access_tokens", "oauth_applications", column: "application_id"
   add_foreign_key "users", "boards", column: "ios_share_board_id"
