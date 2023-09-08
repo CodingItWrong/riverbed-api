@@ -1,7 +1,7 @@
 Rails.application.routes.draw do
   use_doorkeeper
 
-  jsonapi_resources :users, only: %w[create show update]
+  jsonapi_resources :users, only: %w[create show update destroy]
 
   jsonapi_resources :boards, only: %w[index show create update destroy] do
     jsonapi_related_resources :cards

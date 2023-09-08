@@ -156,4 +156,45 @@ RSpec.describe "users" do
       end
     end
   end
+
+  describe "DELETE /users/:id" do
+    context "when logged out" do
+      it "returns an auth error" do
+        expect {
+          delete "/users/#{user.id}"
+        }.not_to change { User.count }
+
+        expect(response.status).to eq(401)
+        expect(response.body).to be_empty
+      end
+    end
+
+    context "when logged in" do
+      it "allows deleting your account" do
+        # create data to ensure the delete cascades
+        FactoryBot.create(:column, user:, board:)
+        FactoryBot.create(:card, user:, board:)
+        FactoryBot.create(:element, :field, user:, board:)
+
+        delete "/users/#{user.id}", headers: headers
+
+        p response.body
+        expect(response.status).to eq(204)
+
+        expect { User.find(user.id) }.to raise_error(ActiveRecord::RecordNotFound)
+      end
+
+      it "does not allow deleting a user other than oneself" do
+        expect {
+          delete "/users/#{other_user.id}", headers: headers
+        }.not_to change { User.count }
+
+        expect(response.status).to eq(404)
+        expect(response_body["errors"]).to include(a_hash_including(
+          "code" => "404",
+          "title" => "Record not found"
+        ))
+      end
+    end
+  end
 end
