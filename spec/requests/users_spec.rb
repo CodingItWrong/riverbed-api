@@ -178,7 +178,6 @@ RSpec.describe "users" do
 
         delete "/users/#{user.id}", headers: headers
 
-        p response.body
         expect(response.status).to eq(204)
 
         expect { User.find(user.id) }.to raise_error(ActiveRecord::RecordNotFound)

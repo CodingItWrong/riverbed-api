@@ -63,6 +63,24 @@ RSpec.describe "boards" do
           "title" => "Record not found"
         ))
       end
+
+      it "returns original icons in the extended field" do
+        user_board.update!(icon: "book")
+        get("/boards/#{user_board.id}", headers: headers)
+        expect(response_body["data"]["attributes"]).to include(
+          "icon" => "book",
+          "icon-extended" => "book"
+        )
+      end
+
+      it "does not return extended icons in the original field" do
+        user_board.update!(icon: "runner")
+        get("/boards/#{user_board.id}", headers: headers)
+        expect(response_body["data"]["attributes"]).to include(
+          "icon" => nil,
+          "icon-extended" => "runner"
+        )
+      end
     end
   end
 
@@ -156,6 +174,34 @@ RSpec.describe "boards" do
           "code" => "404",
           "title" => "Record not found"
         ))
+      end
+
+      it "saves the icon attribute to the icon field" do
+        patch "/boards/#{user_board.id}",
+          params: {
+            data: {
+              type: "boards",
+              id: user_board.id.to_s,
+              attributes: {"icon" => "book"}
+            }
+          }.to_json,
+          headers: headers
+
+        expect(user_board.reload.icon).to eq("book")
+      end
+
+      it "saves the icon-extended attribute to the icon field" do
+        patch "/boards/#{user_board.id}",
+          params: {
+            data: {
+              type: "boards",
+              id: user_board.id.to_s,
+              attributes: {"icon-extended" => "book"}
+            }
+          }.to_json,
+          headers: headers
+
+        expect(user_board.reload.icon).to eq("book")
       end
     end
   end
