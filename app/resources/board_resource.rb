@@ -1,7 +1,32 @@
 class BoardResource < ApplicationResource
   attributes :name, :icon, :color_theme, :favorited_at
 
+  attribute :icon_extended, delegate: :icon
   attribute :options, delegate: :board_options
+
+  # supported in original iOS app
+  ORIGINAL_ICONS = %w[
+    baseball
+    bed
+    book
+    chart
+    checkbox
+    food
+    gamepad
+    link
+    map-marker
+    medical-bag
+    money
+    scale
+    television
+    tree
+  ]
+
+  def icon
+    if ORIGINAL_ICONS.include?(_model.icon)
+      _model.icon
+    end
+  end
 
   relationship :cards, to: :many
   relationship :columns, to: :many
