@@ -14,7 +14,6 @@ gem "doorkeeper"
 gem "httparty"
 
 group :development do
-  gem "bullet"
   gem "dotenv-rails"
 end
 
