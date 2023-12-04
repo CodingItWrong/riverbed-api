@@ -123,7 +123,7 @@ GEM
       rdoc
       reline (>= 0.3.8)
     jaro_winkler (1.5.4)
-    json (2.6.3)
+    json (2.7.0)
     jsonapi-resources (0.10.7)
       activerecord (>= 4.1)
       concurrent-ruby
@@ -277,7 +277,7 @@ GEM
       thor (~> 1.0)
       tilt (~> 2.0)
       yard (~> 0.9, >= 0.9.24)
-    standard (1.32.0)
+    standard (1.32.1)
       language_server-protocol (~> 3.17.0.2)
       lint_roller (~> 1.0)
       rubocop (~> 1.57.2)
