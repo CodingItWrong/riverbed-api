@@ -1,6 +1,6 @@
 DEV_API_KEY = "KAhbB18D0QZBFXBCJKE4xJZYyaWkUTK25LWrqNMIXI2-FSqT5NgJpA-ermcllZG3s8mqioWkfZWNlUVwcOIGrw"
 
-user = User.create!(email: "example@example.com", password: "password")
+user = User.create!(email: "example@example.com", password: "password", allow_emails: false)
 user.api_keys.create!(key: DEV_API_KEY)
 
 def format_date(date) = date.strftime("%Y-%m-%d")
