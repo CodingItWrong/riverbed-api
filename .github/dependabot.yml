@@ -4,3 +4,6 @@ updates:
   directory: "/"
   schedule:
     interval: weekly
+  ignore:
+    - dependency-name: "rack"
+      versions: ["3.1.x"]
