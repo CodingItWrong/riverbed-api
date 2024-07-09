@@ -174,7 +174,7 @@ GEM
     puma (6.4.2)
       nio4r (~> 2.0)
     racc (1.8.0)
-    rack (3.0.11)
+    rack (3.1.6)
     rack-attack (6.7.0)
       rack (>= 1.0, < 4)
     rack-cors (2.0.2)
@@ -328,7 +328,7 @@ DEPENDENCIES
   jsonapi-resources
   pg (~> 1.5)
   puma
-  rack (~> 3.0.11)
+  rack (~> 3.1.6)
   rack-attack
   rack-cors
   rails (~> 7.1.3)

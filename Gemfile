@@ -9,7 +9,7 @@ gem "rack-cors"
 gem "jsonapi-resources"
 gem "bcrypt"
 gem "doorkeeper"
-gem "rack", "~> 3.0.11"
+gem "rack", "~> 3.1.6"
 
 # for web hooks
 gem "httparty"
