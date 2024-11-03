@@ -10,6 +10,7 @@ gem "jsonapi-resources"
 gem "bcrypt"
 gem "doorkeeper"
 gem "rack", "~> 3.0.11"
+gem "ostruct"
 
 # for web hooks
 gem "httparty"
