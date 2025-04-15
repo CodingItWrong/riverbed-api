@@ -113,7 +113,7 @@ RSpec.describe "boards" do
 
         board = Board.last
         expect(board.user).to eq(user)
-        expect(board.columns.map { _1.name }).to eq(["All Cards"])
+        expect(board.columns.map(&:name)).to eq(["All Cards"])
         expect(board.cards.count).to eq(1)
 
         expect(response.status).to eq(201)
