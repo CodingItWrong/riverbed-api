@@ -9,7 +9,7 @@ gem "rack-cors"
 gem "jsonapi-resources"
 gem "bcrypt"
 gem "doorkeeper"
-gem "rack", "~> 3.0.15"
+gem "rack", "~> 3.0.16"
 gem "ostruct"
 
 # for web hooks
