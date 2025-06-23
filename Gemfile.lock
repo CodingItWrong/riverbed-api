@@ -274,7 +274,7 @@ GEM
       rubocop-ast (>= 1.38.0, < 2.0)
     ruby-progressbar (1.13.0)
     securerandom (0.4.1)
-    solargraph (0.55.1)
+    solargraph (0.55.2)
       backport (~> 1.2)
       benchmark (~> 0.4)
       bundler (~> 2.0)
