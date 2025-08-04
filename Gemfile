@@ -3,7 +3,7 @@ source "https://rubygems.org"
 ruby file: ".ruby-version"
 
 gem "rails", "~> 8.0.2"
-gem "pg", "~> 1.5"
+gem "pg", "~> 1.6"
 gem "puma"
 gem "rack-cors"
 gem "jsonapi-resources"
