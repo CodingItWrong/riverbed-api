@@ -63,7 +63,7 @@ class UsersController < JsonapiController
 
   def set_user
     @user = if current_user&.id == params[:id].to_i
-              User.find_by(id: params[:id])
+              current_user
             else
               nil
             end
