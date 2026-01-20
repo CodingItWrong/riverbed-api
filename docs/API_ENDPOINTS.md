@@ -80,12 +80,17 @@ Authorization: Bearer {access_token}
 ### 4. Update User
 - **Endpoint**: `/users/{userId}`
 - **HTTP Method**: `PATCH`
-- **URL Parameters**: 
+- **URL Parameters**:
   - `userId` - The ID of the user to update
 - **Query Parameters**: None
 - **Authentication**: Required (Bearer token)
 - **Content-Type**: `application/vnd.api+json`
-- **Request Body**: JSON:API format with updated user attributes
+- **Request Body**: JSON:API format with updated user attributes. Supports updating:
+  - `allow-emails` (boolean) - Email preference setting
+  - `ios-share-board-id` (integer or null) - ID of the board for iOS share integration
+  - `email` (string) - User's email address (allows email changes)
+  - `password` (string) - User's password (allows password changes)
+- **Note**: While the iOS client currently only updates `allow-emails` and `ios-share-board-id`, the API supports updating `email` and `password` for future functionality.
 - **Implementation**: `UserStore.swift` - `update(_:with:completion:)`
 
 ### 5. Delete User
