@@ -53,6 +53,11 @@ For each endpoint, ensure comprehensive test coverage including:
 - [ ] Test any computed fields or transformations
 - [ ] Verify database state changes match expectations
 
+### 7. Security
+- [ ] Test that user field cannot be set/modified via attributes to prevent user tampering (for resources that belong to a user)
+- [ ] Verify resources are always associated with the authenticated user on create
+- [ ] Verify user association cannot be changed on update
+
 ---
 
 ## Users
@@ -117,3 +122,4 @@ See `spec/requests/boards_spec.rb` for a complete reference implementation that 
 - All board attributes (name, icon, icon-extended, color-theme, favorited-at, options)
 - Comprehensive error handling for malformed payloads
 - Side effect verification (default column and card creation)
+- Security tests preventing user field tampering on create and update
