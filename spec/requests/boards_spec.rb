@@ -196,10 +196,10 @@ RSpec.describe "boards" do
           data: {
             type: "boards",
             attributes: {
-              name: "My Board",
-              icon: "book",
+              :name => "My Board",
+              :icon => "book",
               "color-theme" => "red",
-              options: {"setting1" => "value1"}
+              :options => {"setting1" => "value1"}
             }
           }
         }
@@ -365,10 +365,10 @@ RSpec.describe "boards" do
               type: "boards",
               id: user_board.id.to_s,
               attributes: {
-                name: "Updated Name",
+                :name => "Updated Name",
                 "favorited-at" => favorited_time.as_json,
                 "color-theme" => "green",
-                options: {"key1" => "value1", "key2" => "value2"}
+                :options => {"key1" => "value1", "key2" => "value2"}
               }
             }
           }.to_json,
