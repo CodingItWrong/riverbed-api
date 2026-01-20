@@ -63,10 +63,8 @@ class UsersController < JsonapiController
 
   def set_user
     @user = if current_user&.id == params[:id].to_i
-              current_user
-            else
-              nil
-            end
+      current_user
+    end
   end
 
   def serialize_user(user)
