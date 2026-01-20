@@ -6,6 +6,28 @@ Use this document to track the migration of JSON:API backend routes to the new i
 
 ---
 
+## Migration Process
+
+**CRITICAL**: For each endpoint migration, follow this two-phase approach:
+
+### Phase 1: Expand Test Coverage (Tests Must Pass)
+1. Review the existing resource and controller implementation
+2. Add comprehensive tests following the Test Coverage Requirements below
+3. **Verify all tests pass with the current JSONAPI::Resources implementation**
+4. This ensures you have complete test coverage before changing the implementation
+
+### Phase 2: Reimplement Without JSONAPI::Resources
+1. Update routes from `jsonapi_resources` to standard Rails `resources`
+2. Reimplement controller to handle JSON:API format directly (no JSONAPI::ActsAsResourceController)
+3. **Run tests to verify all existing tests still pass**
+4. If the resource is still needed for nested routes, create a minimal resource with only:
+   - Relationship declarations (for nested route support)
+   - `records` method (for authorization scoping)
+
+**Why This Order Matters**: Writing comprehensive tests first ensures that when you reimplement the controller, you can verify that all functionality is preserved. If you change the implementation before having good tests, you risk silently breaking features.
+
+---
+
 ## Test Coverage Requirements
 
 For each endpoint, ensure comprehensive test coverage including:
