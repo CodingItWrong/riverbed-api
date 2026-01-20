@@ -92,7 +92,7 @@ RSpec.describe "boards" do
         expect(response_body).to have_key("errors")
         expect(response_body).not_to have_key("data")
         expect(response_body["errors"]).to be_an(Array)
-        
+
         error = response_body["errors"].first
         expect(error).to have_key("code")
         expect(error).to have_key("title")
@@ -223,6 +223,44 @@ RSpec.describe "boards" do
           "options" => {"setting1" => "value1"}
         )
       end
+
+      it "returns error for invalid JSON syntax" do
+        expect {
+          post "/boards", params: "invalid json{", headers: headers
+        }.not_to change { Board.count }
+
+        expect(response.status).to eq(400)
+      end
+
+      it "returns error for missing data key" do
+        expect {
+          post "/boards", params: {type: "boards"}.to_json, headers: headers
+        }.not_to change { Board.count }
+
+        expect(response.status).to eq(400)
+        expect(response.content_type).to eq("application/vnd.api+json")
+        expect(response_body).to have_key("errors")
+      end
+
+      it "returns error for missing type in data" do
+        expect {
+          post "/boards", params: {data: {attributes: {}}}.to_json, headers: headers
+        }.not_to change { Board.count }
+
+        expect(response.status).to eq(400)
+        expect(response.content_type).to eq("application/vnd.api+json")
+        expect(response_body).to have_key("errors")
+      end
+
+      it "returns error for wrong type in data" do
+        expect {
+          post "/boards", params: {data: {type: "cards", attributes: {}}}.to_json, headers: headers
+        }.not_to change { Board.count }
+
+        expect(response.status).to eq(400)
+        expect(response.content_type).to eq("application/vnd.api+json")
+        expect(response_body).to have_key("errors")
+      end
     end
   end
 
@@ -342,6 +380,60 @@ RSpec.describe "boards" do
         expect(board.favorited_at.to_i).to eq(favorited_time.to_i)
         expect(board.color_theme).to eq("green")
         expect(board.board_options).to eq({"key1" => "value1", "key2" => "value2"})
+      end
+
+      it "returns error for invalid JSON syntax" do
+        expect {
+          patch "/boards/#{user_board.id}", params: "invalid json{", headers: headers
+        }.not_to change { user_board.reload.name }
+
+        expect(response.status).to eq(400)
+      end
+
+      it "returns error for missing data key" do
+        expect {
+          patch "/boards/#{user_board.id}", params: {type: "boards"}.to_json, headers: headers
+        }.not_to change { user_board.reload.name }
+
+        expect(response.status).to eq(400)
+        expect(response.content_type).to eq("application/vnd.api+json")
+        expect(response_body).to have_key("errors")
+      end
+
+      it "returns error for id mismatch" do
+        expect {
+          patch "/boards/#{user_board.id}",
+            params: {
+              data: {
+                type: "boards",
+                id: "999999",
+                attributes: {name: "New Name"}
+              }
+            }.to_json,
+            headers: headers
+        }.not_to change { user_board.reload.name }
+
+        expect(response.status).to eq(400)
+        expect(response.content_type).to eq("application/vnd.api+json")
+        expect(response_body).to have_key("errors")
+      end
+
+      it "returns error for wrong type in data" do
+        expect {
+          patch "/boards/#{user_board.id}",
+            params: {
+              data: {
+                type: "cards",
+                id: user_board.id.to_s,
+                attributes: {name: "New Name"}
+              }
+            }.to_json,
+            headers: headers
+        }.not_to change { user_board.reload.name }
+
+        expect(response.status).to eq(400)
+        expect(response.content_type).to eq("application/vnd.api+json")
+        expect(response_body).to have_key("errors")
       end
     end
   end
