@@ -62,7 +62,11 @@ class UsersController < JsonapiController
   private
 
   def set_user
-    @user = User.where(id: current_user&.id).find_by(id: params[:id])
+    @user = if current_user&.id == params[:id].to_i
+              User.find_by(id: params[:id])
+            else
+              nil
+            end
   end
 
   def serialize_user(user)
