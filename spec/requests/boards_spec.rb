@@ -261,6 +261,27 @@ RSpec.describe "boards" do
         expect(response.content_type).to start_with("application/vnd.api+json")
         expect(response_body).to have_key("errors")
       end
+
+      it "ignores user field in attributes to prevent user tampering" do
+        other_user = FactoryBot.create(:user)
+        params_with_user = {
+          data: {
+            type: "boards",
+            attributes: {
+              :name => "My Board",
+              "user-id" => other_user.id
+            }
+          }
+        }
+
+        expect {
+          post "/boards", params: params_with_user.to_json, headers: headers
+        }.to change { Board.count }.by(1)
+
+        board = Board.last
+        expect(board.user).to eq(user)
+        expect(board.user).not_to eq(other_user)
+      end
     end
   end
 
@@ -434,6 +455,28 @@ RSpec.describe "boards" do
         expect(response.status).to eq(400)
         expect(response.content_type).to start_with("application/vnd.api+json")
         expect(response_body).to have_key("errors")
+      end
+
+      it "ignores user field in attributes to prevent user tampering" do
+        other_user = FactoryBot.create(:user)
+        patch "/boards/#{user_board.id}",
+          params: {
+            data: {
+              type: "boards",
+              id: user_board.id.to_s,
+              attributes: {
+                :name => "Updated Name",
+                "user-id" => other_user.id
+              }
+            }
+          }.to_json,
+          headers: headers
+
+        expect(response.status).to eq(200)
+        board = user_board.reload
+        expect(board.name).to eq("Updated Name")
+        expect(board.user).to eq(user)
+        expect(board.user).not_to eq(other_user)
       end
     end
   end
