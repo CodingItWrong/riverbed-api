@@ -3,7 +3,10 @@ Rails.application.routes.draw do
 
   jsonapi_resources :users, only: %w[create show update destroy]
 
-  jsonapi_resources :boards, only: %w[index show create update destroy] do
+  resources :boards, only: %w[index show create update destroy]
+
+  # Nested board resources still use jsonapi_resources for now
+  jsonapi_resources :boards, only: [] do
     jsonapi_related_resources :cards
     jsonapi_related_resources :columns
     jsonapi_related_resources :elements

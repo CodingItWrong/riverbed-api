@@ -22,7 +22,7 @@ RSpec.describe "boards" do
         get "/boards", headers: headers
 
         expect(response.status).to eq(200)
-        expect(response.content_type).to eq("application/vnd.api+json")
+        expect(response.content_type).to start_with("application/vnd.api+json")
         expect(response_body["data"]).to contain_exactly(a_hash_including(
           "type" => "boards",
           "id" => user_board.id.to_s,
@@ -66,7 +66,7 @@ RSpec.describe "boards" do
         get("/boards/#{user_board.id}", headers: headers)
 
         expect(response.status).to eq(200)
-        expect(response.content_type).to eq("application/vnd.api+json")
+        expect(response.content_type).to start_with("application/vnd.api+json")
 
         expect(response_body["data"]).to include(
           "type" => "boards",
@@ -79,7 +79,7 @@ RSpec.describe "boards" do
         get("/boards/#{other_user_board.id}", headers: headers)
 
         expect(response.status).to eq(404)
-        expect(response.content_type).to eq("application/vnd.api+json")
+        expect(response.content_type).to start_with("application/vnd.api+json")
         expect(response_body["errors"]).to include(a_hash_including(
           "code" => "404",
           "title" => "Record not found"
@@ -102,7 +102,7 @@ RSpec.describe "boards" do
       it "returns original icons in the extended field" do
         user_board.update!(icon: "book")
         get("/boards/#{user_board.id}", headers: headers)
-        expect(response.content_type).to eq("application/vnd.api+json")
+        expect(response.content_type).to start_with("application/vnd.api+json")
         expect(response_body["data"]["attributes"]).to include(
           "icon" => "book",
           "icon-extended" => "book"
@@ -112,7 +112,7 @@ RSpec.describe "boards" do
       it "does not return extended icons in the original field" do
         user_board.update!(icon: "runner")
         get("/boards/#{user_board.id}", headers: headers)
-        expect(response.content_type).to eq("application/vnd.api+json")
+        expect(response.content_type).to start_with("application/vnd.api+json")
         expect(response_body["data"]["attributes"]).to include(
           "icon" => nil,
           "icon-extended" => "runner"
@@ -170,7 +170,7 @@ RSpec.describe "boards" do
         expect(board.cards.count).to eq(1)
 
         expect(response.status).to eq(201)
-        expect(response.content_type).to eq("application/vnd.api+json")
+        expect(response.content_type).to start_with("application/vnd.api+json")
         expect(response_body["data"]).to include({
           "type" => "boards",
           "id" => board.id.to_s,
@@ -215,7 +215,7 @@ RSpec.describe "boards" do
         expect(board.board_options).to eq({"setting1" => "value1"})
 
         expect(response.status).to eq(201)
-        expect(response.content_type).to eq("application/vnd.api+json")
+        expect(response.content_type).to start_with("application/vnd.api+json")
         expect(response_body["data"]["attributes"]).to include(
           "name" => "My Board",
           "icon" => "book",
@@ -238,7 +238,7 @@ RSpec.describe "boards" do
         }.not_to change { Board.count }
 
         expect(response.status).to eq(400)
-        expect(response.content_type).to eq("application/vnd.api+json")
+        expect(response.content_type).to start_with("application/vnd.api+json")
         expect(response_body).to have_key("errors")
       end
 
@@ -248,7 +248,7 @@ RSpec.describe "boards" do
         }.not_to change { Board.count }
 
         expect(response.status).to eq(400)
-        expect(response.content_type).to eq("application/vnd.api+json")
+        expect(response.content_type).to start_with("application/vnd.api+json")
         expect(response_body).to have_key("errors")
       end
 
@@ -258,7 +258,7 @@ RSpec.describe "boards" do
         }.not_to change { Board.count }
 
         expect(response.status).to eq(400)
-        expect(response.content_type).to eq("application/vnd.api+json")
+        expect(response.content_type).to start_with("application/vnd.api+json")
         expect(response_body).to have_key("errors")
       end
     end
@@ -293,7 +293,7 @@ RSpec.describe "boards" do
         patch "/boards/#{user_board.id}", params: params(user_board), headers: headers
 
         expect(response.status).to eq(200)
-        expect(response.content_type).to eq("application/vnd.api+json")
+        expect(response.content_type).to start_with("application/vnd.api+json")
         expect(response_body["data"]).to include({
           "type" => "boards",
           "id" => user_board.id.to_s,
@@ -322,7 +322,7 @@ RSpec.describe "boards" do
         }.not_to change { other_user_board.name }
 
         expect(response.status).to eq(404)
-        expect(response.content_type).to eq("application/vnd.api+json")
+        expect(response.content_type).to start_with("application/vnd.api+json")
         expect(response_body["errors"]).to include(a_hash_including(
           "code" => "404",
           "title" => "Record not found"
@@ -396,7 +396,7 @@ RSpec.describe "boards" do
         }.not_to change { user_board.reload.name }
 
         expect(response.status).to eq(400)
-        expect(response.content_type).to eq("application/vnd.api+json")
+        expect(response.content_type).to start_with("application/vnd.api+json")
         expect(response_body).to have_key("errors")
       end
 
@@ -414,7 +414,7 @@ RSpec.describe "boards" do
         }.not_to change { user_board.reload.name }
 
         expect(response.status).to eq(400)
-        expect(response.content_type).to eq("application/vnd.api+json")
+        expect(response.content_type).to start_with("application/vnd.api+json")
         expect(response_body).to have_key("errors")
       end
 
@@ -432,7 +432,7 @@ RSpec.describe "boards" do
         }.not_to change { user_board.reload.name }
 
         expect(response.status).to eq(400)
-        expect(response.content_type).to eq("application/vnd.api+json")
+        expect(response.content_type).to start_with("application/vnd.api+json")
         expect(response_body).to have_key("errors")
       end
     end
@@ -466,7 +466,7 @@ RSpec.describe "boards" do
         }.not_to change { Board.count }
 
         expect(response.status).to eq(404)
-        expect(response.content_type).to eq("application/vnd.api+json")
+        expect(response.content_type).to start_with("application/vnd.api+json")
         expect(response_body["errors"]).to include(a_hash_including(
           "code" => "404",
           "title" => "Record not found"
