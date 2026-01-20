@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class UsersController < ApplicationController
+class UsersController < JsonapiController
   before_action :doorkeeper_authorize!, except: [:create]
   before_action :set_user, only: [:show, :update, :destroy]
 
