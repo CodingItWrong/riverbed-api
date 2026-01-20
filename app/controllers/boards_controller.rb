@@ -1,3 +1,3 @@
-class BoardsController < ApplicationController
+class BoardsController < JsonapiController
   before_action :doorkeeper_authorize!
 end
