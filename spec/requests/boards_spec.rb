@@ -29,6 +29,25 @@ RSpec.describe "boards" do
           "attributes" => a_hash_including("name" => user_board.name)
         ))
       end
+
+      it "returns complete JSON:API structure with required top-level keys" do
+        get "/boards", headers: headers
+
+        expect(response_body).to have_key("data")
+        expect(response_body["data"]).to be_an(Array)
+      end
+
+      it "returns boards with complete resource object structure" do
+        get "/boards", headers: headers
+
+        board_data = response_body["data"].first
+        expect(board_data).to have_key("type")
+        expect(board_data).to have_key("id")
+        expect(board_data).to have_key("attributes")
+        expect(board_data["type"]).to eq("boards")
+        expect(board_data["id"]).to be_a(String)
+        expect(board_data["attributes"]).to be_a(Hash)
+      end
     end
   end
 
@@ -65,6 +84,19 @@ RSpec.describe "boards" do
           "code" => "404",
           "title" => "Record not found"
         ))
+      end
+
+      it "returns complete JSON:API error structure for not found" do
+        get("/boards/#{other_user_board.id}", headers: headers)
+
+        expect(response_body).to have_key("errors")
+        expect(response_body).not_to have_key("data")
+        expect(response_body["errors"]).to be_an(Array)
+        
+        error = response_body["errors"].first
+        expect(error).to have_key("code")
+        expect(error).to have_key("title")
+        expect(error["code"]).to eq("404")
       end
 
       it "returns original icons in the extended field" do
@@ -146,6 +178,19 @@ RSpec.describe "boards" do
         })
       end
 
+      it "returns complete JSON:API structure for created resource" do
+        post "/boards", params: params.to_json, headers: headers
+
+        expect(response_body).to have_key("data")
+        expect(response_body["data"]).to be_a(Hash)
+        expect(response_body["data"]).to have_key("type")
+        expect(response_body["data"]).to have_key("id")
+        expect(response_body["data"]).to have_key("attributes")
+        expect(response_body["data"]["type"]).to eq("boards")
+        expect(response_body["data"]["id"]).to be_a(String)
+        expect(response_body["data"]["attributes"]).to be_a(Hash)
+      end
+
       it "creates a board with all attributes including board_options" do
         params_with_attrs = {
           data: {
@@ -218,6 +263,19 @@ RSpec.describe "boards" do
         })
 
         expect(user_board.reload.name).to eq(name)
+      end
+
+      it "returns complete JSON:API structure for updated resource" do
+        patch "/boards/#{user_board.id}", params: params(user_board), headers: headers
+
+        expect(response_body).to have_key("data")
+        expect(response_body["data"]).to be_a(Hash)
+        expect(response_body["data"]).to have_key("type")
+        expect(response_body["data"]).to have_key("id")
+        expect(response_body["data"]).to have_key("attributes")
+        expect(response_body["data"]["type"]).to eq("boards")
+        expect(response_body["data"]["id"]).to eq(user_board.id.to_s)
+        expect(response_body["data"]["attributes"]).to be_a(Hash)
       end
 
       it "does not allow updating a board not belonging to the user" do
