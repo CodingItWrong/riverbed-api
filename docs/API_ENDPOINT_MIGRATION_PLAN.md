@@ -67,7 +67,7 @@ For each endpoint, ensure comprehensive test coverage including:
 - [x] `PATCH /boards/{boardId}` - Update board
 - [x] `DELETE /boards/{boardId}` - Delete board
 
-**Test Coverage**: ✅ Complete (33 tests covering all requirements above)
+**Test Coverage**: ✅ Complete
 
 ## Columns
 - [ ] `GET /boards/{boardId}/columns` - List columns for board
