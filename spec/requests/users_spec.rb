@@ -150,7 +150,7 @@ RSpec.describe "users" do
       end
 
       it "validates email uniqueness" do
-        existing_user = FactoryBot.create(:user, email: "taken@example.com")
+        FactoryBot.create(:user, email: "taken@example.com")
         params_with_duplicate_email = valid_params.deep_dup
         params_with_duplicate_email[:data][:attributes]["email"] = "taken@example.com"
 
