@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class JsonapiController < ApplicationController
+class JsonapiResourcesController < ApplicationController
   include JSONAPI::ActsAsResourceController
 
   private

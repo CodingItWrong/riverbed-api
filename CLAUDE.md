@@ -59,7 +59,7 @@ rails generate jsonapi:controller widget
 
 The API follows the JSON:API specification using the `jsonapi-resources` gem. The architecture has three layers:
 
-1. **Controllers** (`app/controllers/*_controller.rb`): Inherit from `JsonapiController`, which includes `JSONAPI::ActsAsResourceController`. Most controllers only need to call `doorkeeper_authorize!` for authentication.
+1. **Controllers** (`app/controllers/*_controller.rb`): Inherit from `JsonapiResourcesController`, which includes `JSONAPI::ActsAsResourceController`. Most controllers only need to call `doorkeeper_authorize!` for authentication.
 
 2. **Resources** (`app/resources/*_resource.rb`): Inherit from `ApplicationResource` (which extends `JSONAPI::Resource`). Resources define:
    - Exposed attributes (with snake_case → kebab-case transformation)
