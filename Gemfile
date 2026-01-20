@@ -1,6 +1,6 @@
 source "https://rubygems.org"
 
-ruby file: ".ruby-version"
+#ruby file: ".ruby-version"
 
 gem "rails", "~> 8.0.3"
 gem "pg", "~> 1.6"
