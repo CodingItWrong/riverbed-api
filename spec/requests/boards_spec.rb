@@ -86,6 +86,22 @@ RSpec.describe "boards" do
           "icon-extended" => "runner"
         )
       end
+
+      it "returns board attributes including favorited_at, color_theme, and board_options" do
+        favorited_time = 1.day.ago
+        user_board.update!(
+          favorited_at: favorited_time,
+          color_theme: "blue",
+          board_options: {"key" => "value"}
+        )
+        get("/boards/#{user_board.id}", headers: headers)
+
+        expect(response_body["data"]["attributes"]).to include(
+          "favorited-at" => favorited_time.as_json,
+          "color-theme" => "blue",
+          "options" => {"key" => "value"}
+        )
+      end
     end
   end
 
@@ -122,11 +138,45 @@ RSpec.describe "boards" do
         expect(board.cards.count).to eq(1)
 
         expect(response.status).to eq(201)
+        expect(response.content_type).to eq("application/vnd.api+json")
         expect(response_body["data"]).to include({
           "type" => "boards",
           "id" => board.id.to_s,
           "attributes" => a_hash_including("name" => nil)
         })
+      end
+
+      it "creates a board with all attributes including board_options" do
+        params_with_attrs = {
+          data: {
+            type: "boards",
+            attributes: {
+              name: "My Board",
+              icon: "book",
+              "color-theme" => "red",
+              options: {"setting1" => "value1"}
+            }
+          }
+        }
+
+        expect {
+          post "/boards", params: params_with_attrs.to_json, headers: headers
+        }.to change { Board.count }.by(1)
+
+        board = Board.last
+        expect(board.name).to eq("My Board")
+        expect(board.icon).to eq("book")
+        expect(board.color_theme).to eq("red")
+        expect(board.board_options).to eq({"setting1" => "value1"})
+
+        expect(response.status).to eq(201)
+        expect(response.content_type).to eq("application/vnd.api+json")
+        expect(response_body["data"]["attributes"]).to include(
+          "name" => "My Board",
+          "icon" => "book",
+          "color-theme" => "red",
+          "options" => {"setting1" => "value1"}
+        )
       end
     end
   end
@@ -209,6 +259,31 @@ RSpec.describe "boards" do
           headers: headers
 
         expect(user_board.reload.icon).to eq("book")
+      end
+
+      it "updates board attributes including favorited_at, color_theme, and board_options" do
+        favorited_time = 2.days.ago
+        patch "/boards/#{user_board.id}",
+          params: {
+            data: {
+              type: "boards",
+              id: user_board.id.to_s,
+              attributes: {
+                name: "Updated Name",
+                "favorited-at" => favorited_time.as_json,
+                "color-theme" => "green",
+                options: {"key1" => "value1", "key2" => "value2"}
+              }
+            }
+          }.to_json,
+          headers: headers
+
+        expect(response.status).to eq(200)
+        board = user_board.reload
+        expect(board.name).to eq("Updated Name")
+        expect(board.favorited_at.to_i).to eq(favorited_time.to_i)
+        expect(board.color_theme).to eq("green")
+        expect(board.board_options).to eq({"key1" => "value1", "key2" => "value2"})
       end
     end
   end
