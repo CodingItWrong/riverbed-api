@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class BoardsController < ApplicationController
+class BoardsController < JsonapiController
   before_action :doorkeeper_authorize!
 
   ORIGINAL_ICONS = %w[
