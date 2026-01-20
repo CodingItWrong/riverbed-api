@@ -6,6 +6,7 @@
 
 # Ignore bundler config.
 /.bundle
+/vendor/bundle
 
 # Ignore all logfiles and tempfiles.
 /log/*
@@ -27,3 +28,6 @@
 .DS_Store
 
 node_modules
+
+# Temporary bundler backup file
+Gemfile.bak
