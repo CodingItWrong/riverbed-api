@@ -419,8 +419,6 @@ RSpec.describe "cards" do
           }
         }
 
-        other_user_card.field_values.dup
-
         expect {
           patch "/cards/#{other_user_card.id}", params: params.to_json, headers: headers
         }.not_to change { other_user_card.reload.field_values }
