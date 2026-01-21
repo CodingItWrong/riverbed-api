@@ -401,7 +401,8 @@ RSpec.describe "elements" do
           post "/elements", params: params.to_json, headers: headers
         }.not_to change { Element.count }
 
-        expect(response.status).to eq(0) # Changed for unknown reason in Rack 3.1; in a real app it returns 422
+        expect(response.status).to eq(422)
+        expect(response.content_type).to start_with("application/vnd.api+json")
         expect(response_body).to have_key("errors")
       end
     end
