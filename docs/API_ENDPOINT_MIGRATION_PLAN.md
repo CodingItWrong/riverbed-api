@@ -121,8 +121,8 @@ For each endpoint, ensure comprehensive test coverage including:
 
 ## Migration Progress Summary
 - Total JSON:API Endpoints: 21
-- Completed: 8 (Boards: 4, Columns: 4)
-- Remaining: 13
+- Completed: 12 (Boards: 4, Columns: 4, Users: 4)
+- Remaining: 9 (Elements: 4, Cards: 5)
 
 ## Excluded Non-JSON:API Endpoints
 The following endpoints use standard JSON format and are excluded from this plan:
