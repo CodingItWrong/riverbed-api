@@ -105,10 +105,12 @@ For each endpoint, ensure comprehensive test coverage including:
 **Test Coverage**: ✅ Complete
 
 ## Elements
-- [ ] `GET /boards/{boardId}/elements` - List elements for board
-- [ ] `POST /elements` - Create element
-- [ ] `PATCH /elements/{elementId}` - Update element (including display order)
-- [ ] `DELETE /elements/{elementId}` - Delete element
+- [x] `GET /boards/{boardId}/elements` - List elements for board
+- [x] `POST /elements` - Create element
+- [x] `PATCH /elements/{elementId}` - Update element (including display order)
+- [x] `DELETE /elements/{elementId}` - Delete element
+
+**Test Coverage**: ✅ Complete
 
 ## Cards
 - [ ] `GET /boards/{boardId}/cards` - List cards for board
@@ -121,8 +123,8 @@ For each endpoint, ensure comprehensive test coverage including:
 
 ## Migration Progress Summary
 - Total JSON:API Endpoints: 21
-- Completed: 12 (Boards: 4, Columns: 4, Users: 4)
-- Remaining: 9 (Elements: 4, Cards: 5)
+- Completed: 16 (Boards: 4, Columns: 4, Elements: 4, Users: 4)
+- Remaining: 5 (Cards: 5)
 
 ## Excluded Non-JSON:API Endpoints
 The following endpoints use standard JSON format and are excluded from this plan:
