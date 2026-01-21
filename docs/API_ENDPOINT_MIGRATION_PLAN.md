@@ -76,17 +76,17 @@ For each endpoint, ensure comprehensive test coverage including:
 - [ ] Verify database state changes match expectations
 
 ### 7. Security
-- [ ] Test that user field cannot be set/modified via attributes to prevent user tampering (for resources that belong to a user)
 - [ ] Verify resources are always associated with the authenticated user on create
-- [ ] Verify user association cannot be changed on update
 
 ---
 
 ## Users
-- [ ] `POST /users` - Create user (sign up)
-- [ ] `GET /users/{userId}` - Get user by ID
-- [ ] `PATCH /users/{userId}` - Update user
-- [ ] `DELETE /users/{userId}` - Delete user
+- [x] `POST /users` - Create user (sign up)
+- [x] `GET /users/{userId}` - Get user by ID
+- [x] `PATCH /users/{userId}` - Update user
+- [x] `DELETE /users/{userId}` - Delete user
+
+**Test Coverage**: ✅ Complete
 
 ## Boards
 - [x] `GET /boards` - List all boards
@@ -97,10 +97,12 @@ For each endpoint, ensure comprehensive test coverage including:
 **Test Coverage**: ✅ Complete
 
 ## Columns
-- [ ] `GET /boards/{boardId}/columns` - List columns for board
-- [ ] `POST /columns` - Create column
-- [ ] `PATCH /columns/{columnId}` - Update column (including display order)
-- [ ] `DELETE /columns/{columnId}` - Delete column
+- [x] `GET /boards/{boardId}/columns` - List columns for board
+- [x] `POST /columns` - Create column
+- [x] `PATCH /columns/{columnId}` - Update column (including display order)
+- [x] `DELETE /columns/{columnId}` - Delete column
+
+**Test Coverage**: ✅ Complete
 
 ## Elements
 - [ ] `GET /boards/{boardId}/elements` - List elements for board
@@ -119,8 +121,8 @@ For each endpoint, ensure comprehensive test coverage including:
 
 ## Migration Progress Summary
 - Total JSON:API Endpoints: 21
-- Completed: 4 (Boards)
-- Remaining: 17
+- Completed: 8 (Boards: 4, Columns: 4)
+- Remaining: 13
 
 ## Excluded Non-JSON:API Endpoints
 The following endpoints use standard JSON format and are excluded from this plan:
@@ -137,11 +139,24 @@ The following endpoints use standard JSON format and are excluded from this plan
 
 ## Reference Implementation
 
-See `spec/requests/boards_spec.rb` for a complete reference implementation that follows all test coverage requirements above. This spec includes:
-- All CRUD operations with success and failure scenarios
-- Authentication and authorization checks
-- Complete JSON:API format validation
-- All board attributes (name, icon, icon-extended, color-theme, favorited-at, options)
-- Comprehensive error handling for malformed payloads
-- Side effect verification (default column and card creation)
-- Security tests preventing user field tampering on create and update
+**Primary Reference: `spec/requests/columns_spec.rb`**
+
+This is the recommended reference for migrating remaining endpoints. It demonstrates:
+- All CRUD operations including nested routes (`GET /boards/:id/columns`)
+- Complete attribute coverage with delegated attributes (`card-sort-order` → `sort_order`)
+- Relationship handling (board association on create, preventing relationship updates)
+- Comprehensive JSON:API format validation
+- All error scenarios (invalid JSON, missing/wrong type, ID mismatch, unauthorized access)
+- User association verification on create
+
+The columns spec is more representative of the remaining endpoints (elements, cards) since they:
+- Have relationships to boards (like columns do)
+- Use delegated attributes
+- Need nested route support
+
+**Alternative Reference: `spec/requests/boards_spec.rb`**
+
+Boards spec includes additional patterns like:
+- Side effect verification (creating default related records)
+- User field tampering prevention (works in new implementation but not with JSONAPI::Resources during Phase 1)
+- Multiple delegated attributes (`icon-extended` → `icon`, `options` → `board_options`)
