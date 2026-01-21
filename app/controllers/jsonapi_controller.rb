@@ -32,7 +32,7 @@ class JsonapiController < ApplicationController
       return :error
     end
 
-    {attributes: data["attributes"] || {}}
+    {body: body, attributes: data["attributes"] || {}}
   end
 
   def render_not_found

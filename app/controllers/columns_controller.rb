@@ -25,16 +25,9 @@ class ColumnsController < JsonapiController
     return if result == :error
 
     attributes = result[:attributes]
+    body = result[:body]
 
     # Extract board from relationships
-    begin
-      body = JSON.parse(request.body.read)
-      request.body.rewind
-    rescue JSON::ParserError
-      # Already handled in validate_jsonapi_request
-      return
-    end
-
     relationships = body.dig("data", "relationships")
     board_id = relationships&.dig("board", "data", "id")
 
@@ -74,21 +67,14 @@ class ColumnsController < JsonapiController
     result = validate_jsonapi_request("columns", require_id: true, expected_id: params[:id])
     return if result == :error
 
-    # Check if relationships are being updated (not allowed for board)
-    begin
-      body = JSON.parse(request.body.read)
-      request.body.rewind
-    rescue JSON::ParserError
-      # Already handled in validate_jsonapi_request
-      return
-    end
+    body = result[:body]
+    attributes = result[:attributes]
 
+    # Check if relationships are being updated (not allowed for board)
     if body.dig("data", "relationships")
       render json: {errors: [{code: "400", title: "Updating relationships not allowed"}]}, status: :bad_request, content_type: jsonapi_content_type
       return
     end
-
-    attributes = result[:attributes]
 
     column.name = attributes["name"] if attributes.key?("name")
     column.display_order = attributes["display-order"] if attributes.key?("display-order")
