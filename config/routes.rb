@@ -3,17 +3,19 @@ Rails.application.routes.draw do
 
   resources :users, only: %w[create show update destroy]
 
-  resources :boards, only: %w[index show create update destroy]
+  resources :boards, only: %w[index show create update destroy] do
+    resources :columns, only: %w[index]
+  end
+
+  resources :columns, only: %w[show create update destroy]
 
   # Nested board resources still use jsonapi_resources for now
   jsonapi_resources :boards, only: [] do
     jsonapi_related_resources :cards
-    jsonapi_related_resources :columns
     jsonapi_related_resources :elements
   end
 
   jsonapi_resources :cards, only: %w[show create update destroy]
-  jsonapi_resources :columns, only: %w[show create update destroy]
   jsonapi_resources :elements, only: %w[show create update destroy]
 
   # iOS share integration
