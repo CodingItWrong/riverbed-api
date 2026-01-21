@@ -1,7 +1,7 @@
 Rails.application.routes.draw do
   use_doorkeeper
 
-  resources :boards do
+  resources :boards, only: %w[index show create update destroy] do
     resources :columns, only: %w[index]
     resources :elements, only: %w[index]
     resources :cards, only: %w[index]
