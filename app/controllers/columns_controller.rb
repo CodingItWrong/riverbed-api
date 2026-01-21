@@ -25,10 +25,9 @@ class ColumnsController < JsonapiController
     return if result == :error
 
     attributes = result[:attributes]
-    body = result[:body]
+    relationships = result[:relationships]
 
     # Extract board from relationships
-    relationships = body.dig("data", "relationships")
     board_id = relationships&.dig("board", "data", "id")
 
     unless board_id
@@ -67,11 +66,11 @@ class ColumnsController < JsonapiController
     result = validate_jsonapi_request("columns", require_id: true, expected_id: params[:id])
     return if result == :error
 
-    body = result[:body]
     attributes = result[:attributes]
+    relationships = result[:relationships]
 
     # Check if relationships are being updated (not allowed for board)
-    if body.dig("data", "relationships")
+    if relationships
       render json: {errors: [{code: "400", title: "Updating relationships not allowed"}]}, status: :bad_request, content_type: jsonapi_content_type
       return
     end
