@@ -634,9 +634,10 @@ RSpec.describe "elements" do
         expect(response.status).to eq(204)
 
         # Button element deletion should not trigger field_values cleanup
-        # since buttons don't store field values
+        # since buttons don't store field values. The field_values key remains (even though it shouldn't exist).
         card.reload
-        # The field_values should remain unchanged (the after_remove hook only runs for field type)
+        expect(card.field_values).to have_key(button_element.id.to_s)
+        expect(card.field_values[button_element.id.to_s]).to eq("some value")
       end
     end
   end
