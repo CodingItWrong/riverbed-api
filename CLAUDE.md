@@ -159,7 +159,7 @@ Remaining:
 ## Technology Stack
 
 - Rails 8.0.3
-- Ruby 3.4.4
+- Ruby 3.4.7
 - PostgreSQL (required)
 - Gems:
   - `jsonapi-resources` - JSON:API implementation
