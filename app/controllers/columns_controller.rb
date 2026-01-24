@@ -7,7 +7,7 @@ class ColumnsController < JsonapiController
     board = current_user.boards.find_by(id: params[:board_id])
     return render_not_found unless board
 
-    columns = board.columns
+    columns = board.columns.order(:id)
     render json: {data: columns.map { |column| serialize_column(column) }}, content_type: jsonapi_content_type
   end
 

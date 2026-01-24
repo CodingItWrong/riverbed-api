@@ -21,7 +21,7 @@ class BoardsController < JsonapiController
   ].freeze
 
   def index
-    boards = current_user.boards
+    boards = current_user.boards.order(:id)
     render json: {data: boards.map { |board| serialize_board(board) }}, content_type: jsonapi_content_type
   end
 

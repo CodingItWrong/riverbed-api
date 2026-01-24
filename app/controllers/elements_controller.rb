@@ -7,7 +7,7 @@ class ElementsController < JsonapiController
     board = current_user.boards.find_by(id: params[:board_id])
     return render_not_found unless board
 
-    elements = board.elements
+    elements = board.elements.order(:id)
     render json: {data: elements.map { |element| serialize_element(element) }}, content_type: jsonapi_content_type
   end
 
