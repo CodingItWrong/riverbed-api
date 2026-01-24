@@ -158,11 +158,10 @@ Remaining:
 
 ## Technology Stack
 
-- Rails 8.0.3
-- Ruby 3.4.7
+- Rails
+- Ruby
 - PostgreSQL (required)
 - Gems:
-  - `jsonapi-resources` - JSON:API implementation
   - `doorkeeper` - OAuth2 provider
   - `bcrypt` - Password hashing
   - `rack-cors` - CORS handling
