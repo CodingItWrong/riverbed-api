@@ -7,7 +7,7 @@ class CardsController < JsonapiController
     board = current_user.boards.find_by(id: params[:board_id])
     return render_not_found unless board
 
-    cards = board.cards
+    cards = board.cards.order(:id)
     render json: {data: cards.map { |card| serialize_card(card) }}, content_type: jsonapi_content_type
   end
 
