@@ -8,7 +8,7 @@ gem "puma"
 gem "rack-cors"
 gem "bcrypt"
 gem "doorkeeper"
-gem "rack", "~> 3.2.4"
+gem "rack", "~> 3.2.5"
 gem "ostruct"
 
 # for web hooks

@@ -183,7 +183,7 @@ GEM
     puma (7.2.0)
       nio4r (~> 2.0)
     racc (1.8.1)
-    rack (3.2.4)
+    rack (3.2.5)
     rack-attack (6.8.0)
       rack (>= 1.0, < 4)
     rack-cors (3.0.0)
@@ -361,7 +361,7 @@ DEPENDENCIES
   ostruct
   pg (~> 1.6)
   puma
-  rack (~> 3.2.4)
+  rack (~> 3.2.5)
   rack-attack
   rack-cors
   rails (~> 8.1.2)
