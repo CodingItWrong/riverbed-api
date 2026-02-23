@@ -182,7 +182,7 @@ A private `serialize_card` helper (same format as `CardsController#serialize_car
 - Non-existent column ID → 404
 
 #### No conditions (all cards pass)
-- Column with `nil` `card_inclusion_conditions` → returns all board cards
+- Column with `nil` `card_inclusion_conditions` → returns all board cards *(tested at unit level only — the `card_inclusion_conditions` DB column has a NOT NULL constraint, so nil cannot be set via `update!` in an integration test)*
 - Column with `[]` `card_inclusion_conditions` → returns all board cards
 
 #### Filtering in action
