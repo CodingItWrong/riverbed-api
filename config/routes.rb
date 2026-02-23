@@ -6,7 +6,9 @@ Rails.application.routes.draw do
     resources :elements, only: %w[index]
     resources :cards, only: %w[index]
   end
-  resources :columns, only: %w[show create update destroy]
+  resources :columns, only: %w[show create update destroy] do
+    get :cards, on: :member
+  end
   resources :elements, only: %w[show create update destroy]
   resources :cards, only: %w[show create update destroy]
   resources :users, only: %w[create show update destroy]

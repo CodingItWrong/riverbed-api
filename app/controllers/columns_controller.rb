@@ -89,6 +89,20 @@ class ColumnsController < JsonapiController
     end
   end
 
+  def cards
+    column = current_user.columns.find_by(id: params[:id])
+    return render_not_found unless column
+
+    elements_by_id = column.board.elements.index_by { |e| e.id.to_s }
+    conditions = column.card_inclusion_conditions
+    evaluator = CardConditionEvaluator.new(conditions, elements_by_id)
+
+    filtered = column.board.cards.order(:id).select { |card| evaluator.passes?(card) }
+
+    render json: {data: filtered.map { |card| serialize_card(card) }},
+      content_type: jsonapi_content_type
+  end
+
   def destroy
     column = current_user.columns.find_by(id: params[:id])
     return render_not_found unless column
@@ -98,6 +112,16 @@ class ColumnsController < JsonapiController
   end
 
   private
+
+  def serialize_card(card)
+    {
+      type: "cards",
+      id: card.id.to_s,
+      attributes: {
+        "field-values" => card.field_values
+      }
+    }
+  end
 
   def serialize_column(column)
     {
