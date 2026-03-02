@@ -294,6 +294,23 @@ RSpec.describe CardConditionEvaluator do
   end
 
   # ---------------------------------------------------------------------------
+  # IS_NOT_CURRENT_MONTH – datetime type
+  # ---------------------------------------------------------------------------
+
+  describe "IS_NOT_CURRENT_MONTH (datetime type, frozen to 2024-03-15)" do
+    before { freeze_to("2024-03-15 12:00:00") }
+
+    it { expect(eval_with("IS_NOT_CURRENT_MONTH", "2024-03-15T12:00:00.000Z", data_type: "datetime")).to be false }
+    it { expect(eval_with("IS_NOT_CURRENT_MONTH", "2024-03-01T00:00:00.000Z", data_type: "datetime")).to be false }
+    it { expect(eval_with("IS_NOT_CURRENT_MONTH", "2024-02-28T23:59:59.999Z", data_type: "datetime")).to be true }
+    it { expect(eval_with("IS_NOT_CURRENT_MONTH", "2024-04-01T00:00:00.000Z", data_type: "datetime")).to be true }
+    it "nil: inverse of IS_CURRENT_MONTH(nil)=false → true" do
+      expect(eval_with("IS_NOT_CURRENT_MONTH", nil, data_type: "datetime")).to be true
+    end
+    it { expect(eval_with("IS_NOT_CURRENT_MONTH", "", data_type: "datetime")).to be true }
+  end
+
+  # ---------------------------------------------------------------------------
   # IS_PREVIOUS_MONTH – date type
   # ---------------------------------------------------------------------------
 
@@ -329,6 +346,34 @@ RSpec.describe CardConditionEvaluator do
   end
 
   # ---------------------------------------------------------------------------
+  # IS_PREVIOUS_MONTH – datetime type
+  # ---------------------------------------------------------------------------
+
+  describe "IS_PREVIOUS_MONTH (datetime type, frozen to 2024-03-15)" do
+    before { freeze_to("2024-03-15 12:00:00") }
+
+    it { expect(eval_with("IS_PREVIOUS_MONTH", "2024-02-01T00:00:00.000Z", data_type: "datetime")).to be true }
+    it { expect(eval_with("IS_PREVIOUS_MONTH", "2024-02-15T12:00:00.000Z", data_type: "datetime")).to be true }
+    it { expect(eval_with("IS_PREVIOUS_MONTH", "2024-02-29T23:59:59.999Z", data_type: "datetime")).to be true }
+    it "boundary: current month start is excluded" do
+      expect(eval_with("IS_PREVIOUS_MONTH", "2024-03-01T00:00:00.000Z", data_type: "datetime")).to be false
+    end
+    it { expect(eval_with("IS_PREVIOUS_MONTH", "2024-01-31T23:59:59.999Z", data_type: "datetime")).to be false }
+    it { expect(eval_with("IS_PREVIOUS_MONTH", "2024-03-15T12:00:00.000Z", data_type: "datetime")).to be false }
+    it { expect(eval_with("IS_PREVIOUS_MONTH", nil, data_type: "datetime")).to be false }
+    it { expect(eval_with("IS_PREVIOUS_MONTH", "", data_type: "datetime")).to be false }
+  end
+
+  describe "IS_PREVIOUS_MONTH (datetime type, year boundary, frozen to 2024-01-15)" do
+    before { freeze_to("2024-01-15 12:00:00") }
+
+    it { expect(eval_with("IS_PREVIOUS_MONTH", "2023-12-31T23:59:59.999Z", data_type: "datetime")).to be true }
+    it { expect(eval_with("IS_PREVIOUS_MONTH", "2023-12-01T00:00:00.000Z", data_type: "datetime")).to be true }
+    it { expect(eval_with("IS_PREVIOUS_MONTH", "2024-01-01T00:00:00.000Z", data_type: "datetime")).to be false }
+    it { expect(eval_with("IS_PREVIOUS_MONTH", "2023-11-30T23:59:59.999Z", data_type: "datetime")).to be false }
+  end
+
+  # ---------------------------------------------------------------------------
   # IS_FUTURE – date type
   # ---------------------------------------------------------------------------
 
@@ -361,6 +406,7 @@ RSpec.describe CardConditionEvaluator do
     end
     it { expect(eval_with("IS_FUTURE", "2024-03-15T11:59:59.999Z", data_type: "datetime")).to be false }
     it { expect(eval_with("IS_FUTURE", nil, data_type: "datetime")).to be false }
+    it { expect(eval_with("IS_FUTURE", "", data_type: "datetime")).to be false }
   end
 
   # ---------------------------------------------------------------------------
@@ -401,6 +447,24 @@ RSpec.describe CardConditionEvaluator do
   end
 
   # ---------------------------------------------------------------------------
+  # IS_NOT_FUTURE – datetime type
+  # ---------------------------------------------------------------------------
+
+  describe "IS_NOT_FUTURE (datetime type, frozen to 2024-03-15T12:00:00.000Z)" do
+    before { freeze_to("2024-03-15 12:00:00") }
+
+    it { expect(eval_with("IS_NOT_FUTURE", "2024-03-15T12:00:00.001Z", data_type: "datetime")).to be false }
+    it "exact now is not future, so IS_NOT_FUTURE is true" do
+      expect(eval_with("IS_NOT_FUTURE", "2024-03-15T12:00:00.000Z", data_type: "datetime")).to be true
+    end
+    it { expect(eval_with("IS_NOT_FUTURE", "2024-03-15T11:59:59.999Z", data_type: "datetime")).to be true }
+    it "nil: inverse of IS_FUTURE(nil)=false → true" do
+      expect(eval_with("IS_NOT_FUTURE", nil, data_type: "datetime")).to be true
+    end
+    it { expect(eval_with("IS_NOT_FUTURE", "", data_type: "datetime")).to be true }
+  end
+
+  # ---------------------------------------------------------------------------
   # IS_PAST – date type
   # ---------------------------------------------------------------------------
 
@@ -430,6 +494,7 @@ RSpec.describe CardConditionEvaluator do
     end
     it { expect(eval_with("IS_PAST", "2024-03-15T12:00:00.001Z", data_type: "datetime")).to be false }
     it { expect(eval_with("IS_PAST", nil, data_type: "datetime")).to be false }
+    it { expect(eval_with("IS_PAST", "", data_type: "datetime")).to be false }
   end
 
   # ---------------------------------------------------------------------------
@@ -467,5 +532,23 @@ RSpec.describe CardConditionEvaluator do
     it "returns false for text" do
       expect(eval_with("IS_NOT_PAST", "2024-03-16", data_type: "text")).to be false
     end
+  end
+
+  # ---------------------------------------------------------------------------
+  # IS_NOT_PAST – datetime type
+  # ---------------------------------------------------------------------------
+
+  describe "IS_NOT_PAST (datetime type, frozen to 2024-03-15T12:00:00.000Z)" do
+    before { freeze_to("2024-03-15 12:00:00") }
+
+    it { expect(eval_with("IS_NOT_PAST", "2024-03-15T11:59:59.999Z", data_type: "datetime")).to be false }
+    it "exact now is not past, so IS_NOT_PAST is true" do
+      expect(eval_with("IS_NOT_PAST", "2024-03-15T12:00:00.000Z", data_type: "datetime")).to be true
+    end
+    it { expect(eval_with("IS_NOT_PAST", "2024-03-15T12:00:00.001Z", data_type: "datetime")).to be true }
+    it "nil: inverse of IS_PAST(nil)=false → true" do
+      expect(eval_with("IS_NOT_PAST", nil, data_type: "datetime")).to be true
+    end
+    it { expect(eval_with("IS_NOT_PAST", "", data_type: "datetime")).to be true }
   end
 end
