@@ -313,7 +313,6 @@ DEPENDENCIES
   httparty
   pg (~> 1.6)
   puma
-  rack (~> 3.2.5)
   rack-attack
   rack-cors
   rails (~> 8.1.2)
