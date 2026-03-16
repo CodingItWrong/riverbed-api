@@ -8,7 +8,6 @@ gem "puma"
 gem "rack-cors"
 gem "bcrypt"
 gem "doorkeeper"
-gem "rack", "~> 3.2.5"
 
 # for web hooks
 gem "httparty"
