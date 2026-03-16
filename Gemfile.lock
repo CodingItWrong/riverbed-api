@@ -355,7 +355,6 @@ PLATFORMS
 DEPENDENCIES
   bcrypt
   coderay
-  csv
   debug
   doorkeeper
   dotenv-rails

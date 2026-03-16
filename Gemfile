@@ -13,7 +13,6 @@ gem "ostruct"
 
 # for web hooks
 gem "httparty"
-gem "csv"
 
 group :development do
   gem "dotenv-rails"
