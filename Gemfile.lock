@@ -78,10 +78,8 @@ GEM
     addressable (2.8.7)
       public_suffix (>= 2.0.2, < 7.0)
     ast (2.4.3)
-    backport (1.2.0)
     base64 (0.3.0)
     bcrypt (3.1.21)
-    benchmark (0.5.0)
     bigdecimal (4.0.1)
     builder (3.3.0)
     coderay (1.1.3)
@@ -126,12 +124,7 @@ GEM
       prism (>= 1.3.0)
       rdoc (>= 4.0.0)
       reline (>= 0.4.2)
-    jaro_winkler (1.7.0)
     json (2.19.1)
-    kramdown (2.5.2)
-      rexml (>= 3.4.4)
-    kramdown-parser-gfm (1.1.0)
-      kramdown (~> 2.0)
     language_server-protocol (3.17.0.5)
     lint_roller (1.1.0)
     logger (1.7.0)
@@ -165,8 +158,6 @@ GEM
       racc (~> 1.4)
     nokogiri (1.19.1-x86_64-linux-gnu)
       racc (~> 1.4)
-    observer (0.1.2)
-    open3 (0.2.1)
     ostruct (0.6.3)
     parallel (1.27.0)
     parser (3.3.10.2)
@@ -230,9 +221,6 @@ GEM
       zeitwerk (~> 2.6)
     rainbow (3.1.1)
     rake (13.3.1)
-    rbs (3.10.3)
-      logger
-      tsort
     rdoc (7.2.0)
       erb
       psych (>= 4.0.0)
@@ -240,8 +228,6 @@ GEM
     regexp_parser (2.11.3)
     reline (0.6.3)
       io-console (~> 0.5)
-    reverse_markdown (3.0.2)
-      nokogiri
     rexml (3.4.4)
     rspec-core (3.13.6)
       rspec-support (~> 3.13.0)
@@ -282,29 +268,6 @@ GEM
       rubocop-ast (>= 1.47.1, < 2.0)
     ruby-progressbar (1.13.0)
     securerandom (0.4.1)
-    solargraph (0.58.3)
-      ast (~> 2.4.3)
-      backport (~> 1.2)
-      benchmark (~> 0.4)
-      bundler (>= 2.0)
-      diff-lcs (~> 1.4)
-      jaro_winkler (~> 1.6, >= 1.6.1)
-      kramdown (~> 2.3)
-      kramdown-parser-gfm (~> 1.1)
-      logger (~> 1.6)
-      observer (~> 0.1)
-      open3 (~> 0.2.1)
-      ostruct (~> 0.6)
-      parser (~> 3.0)
-      prism (~> 1.4)
-      rbs (>= 3.6.1, <= 4.0.0.dev.4)
-      reverse_markdown (~> 3.0)
-      rubocop (~> 1.76)
-      thor (~> 1.0)
-      tilt (~> 2.0)
-      yard (~> 0.9, >= 0.9.24)
-      yard-activesupport-concern (~> 0.0)
-      yard-solargraph (~> 0.1)
     standard (1.54.0)
       language_server-protocol (~> 3.17.0.2)
       lint_roller (~> 1.0)
@@ -319,7 +282,6 @@ GEM
       rubocop-performance (~> 1.26.0)
     stringio (3.2.0)
     thor (1.5.0)
-    tilt (2.7.0)
     timeout (0.6.0)
     tsort (0.2.0)
     tzinfo (2.0.6)
@@ -338,11 +300,6 @@ GEM
       base64
       websocket-extensions (>= 0.1.0)
     websocket-extensions (0.1.5)
-    yard (0.9.38)
-    yard-activesupport-concern (0.0.1)
-      yard (>= 0.8)
-    yard-solargraph (0.1.0)
-      yard (~> 0.9)
     zeitwerk (2.7.5)
 
 PLATFORMS
@@ -369,7 +326,6 @@ DEPENDENCIES
   rails (~> 8.1.2)
   rspec-rails
   rspec_junit_formatter
-  solargraph
   standard
   vcr
   webmock
