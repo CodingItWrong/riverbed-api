@@ -13,10 +13,6 @@ gem "rack", "~> 3.2.5"
 # for web hooks
 gem "httparty"
 
-group :development do
-  gem "dotenv-rails"
-end
-
 group :development, :test do
   gem "coderay"
   gem "debug"

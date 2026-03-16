@@ -97,10 +97,6 @@ GEM
     diff-lcs (1.6.2)
     doorkeeper (5.9.0)
       railties (>= 5)
-    dotenv (3.2.0)
-    dotenv-rails (3.2.0)
-      dotenv (= 3.2.0)
-      railties (>= 6.1)
     drb (2.2.3)
     erb (6.0.2)
     erubi (1.13.1)
@@ -313,7 +309,6 @@ DEPENDENCIES
   coderay
   debug
   doorkeeper
-  dotenv-rails
   factory_bot_rails
   httparty
   pg (~> 1.6)
