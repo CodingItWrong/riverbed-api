@@ -19,7 +19,7 @@ end
 
 group :development, :test do
   gem "coderay"
-  gem "debug", platforms: %i[mri mingw x64_mingw]
+  gem "debug"
   gem "rspec-rails"
   gem "standard"
 end
