@@ -3,9 +3,10 @@
 class CardConditionEvaluator
   TEMPORAL_TYPES = %w[date datetime].freeze
 
-  def initialize(conditions, elements_by_id)
+  def initialize(conditions, elements_by_id, timezone: "UTC")
     @conditions = conditions
     @elements_by_id = elements_by_id
+    @timezone = timezone
   end
 
   def passes?(card)
@@ -118,39 +119,68 @@ class CardConditionEvaluator
     if data_type == "datetime"
       Time.now.utc.iso8601(3)
     else
-      Time.now.utc.strftime("%Y-%m-%d")
+      Time.now.in_time_zone(@timezone).strftime("%Y-%m-%d")
     end
   end
 
   def current_month_start_string(data_type)
-    now = Time.now.utc
-    date_str = format("%04d-%02d-01", now.year, now.month)
-    (data_type == "datetime") ? "#{date_str}T00:00:00.000Z" : date_str
+    if data_type == "datetime"
+      now = Time.now.utc
+      date_str = format("%04d-%02d-01", now.year, now.month)
+      "#{date_str}T00:00:00.000Z"
+    else
+      now = Time.now.in_time_zone(@timezone)
+      format("%04d-%02d-01", now.year, now.month)
+    end
   end
 
   def next_month_start_string(data_type)
-    now = Time.now.utc
-    if now.month == 12
-      year = now.year + 1
-      month = 1
+    if data_type == "datetime"
+      now = Time.now.utc
+      if now.month == 12
+        year = now.year + 1
+        month = 1
+      else
+        year = now.year
+        month = now.month + 1
+      end
+      date_str = format("%04d-%02d-01", year, month)
+      "#{date_str}T00:00:00.000Z"
     else
-      year = now.year
-      month = now.month + 1
+      now = Time.now.in_time_zone(@timezone)
+      if now.month == 12
+        year = now.year + 1
+        month = 1
+      else
+        year = now.year
+        month = now.month + 1
+      end
+      format("%04d-%02d-01", year, month)
     end
-    date_str = format("%04d-%02d-01", year, month)
-    (data_type == "datetime") ? "#{date_str}T00:00:00.000Z" : date_str
   end
 
   def previous_month_start_string(data_type)
-    now = Time.now.utc
-    if now.month == 1
-      year = now.year - 1
-      month = 12
+    if data_type == "datetime"
+      now = Time.now.utc
+      if now.month == 1
+        year = now.year - 1
+        month = 12
+      else
+        year = now.year
+        month = now.month - 1
+      end
+      date_str = format("%04d-%02d-01", year, month)
+      "#{date_str}T00:00:00.000Z"
     else
-      year = now.year
-      month = now.month - 1
+      now = Time.now.in_time_zone(@timezone)
+      if now.month == 1
+        year = now.year - 1
+        month = 12
+      else
+        year = now.year
+        month = now.month - 1
+      end
+      format("%04d-%02d-01", year, month)
     end
-    date_str = format("%04d-%02d-01", year, month)
-    (data_type == "datetime") ? "#{date_str}T00:00:00.000Z" : date_str
   end
 end

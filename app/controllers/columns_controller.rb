@@ -93,9 +93,17 @@ class ColumnsController < JsonapiController
     column = current_user.columns.find_by(id: params[:id])
     return render_not_found unless column
 
+    timezone = params[:timezone].presence || "UTC"
+    unless valid_timezone?(timezone)
+      render json: {errors: [{code: "422", title: "Invalid timezone",
+        detail: "timezone - is not a valid IANA timezone"}]},
+        status: :unprocessable_entity, content_type: jsonapi_content_type
+      return
+    end
+
     elements_by_id = column.board.elements.index_by { |e| e.id.to_s }
     conditions = column.card_inclusion_conditions
-    evaluator = CardConditionEvaluator.new(conditions, elements_by_id)
+    evaluator = CardConditionEvaluator.new(conditions, elements_by_id, timezone: timezone)
 
     filtered = column.board.cards.order(:id).select { |card| evaluator.passes?(card) }
 
@@ -112,6 +120,13 @@ class ColumnsController < JsonapiController
   end
 
   private
+
+  def valid_timezone?(tz_name)
+    ActiveSupport::TimeZone.find_tzinfo(tz_name)
+    true
+  rescue TZInfo::InvalidTimezoneIdentifier
+    false
+  end
 
   def serialize_card(card)
     {

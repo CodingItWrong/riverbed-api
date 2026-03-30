@@ -13,8 +13,8 @@ RSpec.describe CardConditionEvaluator do
     instance_double("Element", data_type: data_type)
   end
 
-  def evaluator(conditions, elements_by_id = {})
-    described_class.new(conditions, elements_by_id)
+  def evaluator(conditions, elements_by_id = {}, timezone = "UTC")
+    described_class.new(conditions, elements_by_id, timezone: timezone)
   end
 
   # ---------------------------------------------------------------------------
@@ -91,11 +91,11 @@ RSpec.describe CardConditionEvaluator do
     [cond]
   end
 
-  def eval_with(query, field_value, data_type: "text", options: {})
+  def eval_with(query, field_value, data_type: "text", options: {}, timezone: "UTC")
     field_id = "42"
     elements = {field_id => make_element(data_type)}
     fv = field_value.nil? ? {} : {field_id => field_value}
-    evaluator(single_cond(field_id, query, options), elements).passes?(make_card(fv))
+    evaluator(single_cond(field_id, query, options), elements, timezone).passes?(make_card(fv))
   end
 
   # ---------------------------------------------------------------------------
@@ -550,5 +550,102 @@ RSpec.describe CardConditionEvaluator do
       expect(eval_with("IS_NOT_PAST", nil, data_type: "datetime")).to be true
     end
     it { expect(eval_with("IS_NOT_PAST", "", data_type: "datetime")).to be true }
+  end
+
+  # ---------------------------------------------------------------------------
+  # Timezone-aware filtering (date fields only)
+  # Frozen UTC: 2024-03-31 23:00:00
+  # UTC date: 2024-03-31 (March)
+  # Asia/Kolkata (UTC+5:30) date: 2024-04-01 (April)
+  # ---------------------------------------------------------------------------
+
+  describe "timezone-aware IS_FUTURE (date type)" do
+    # UTC 2024-03-14 23:00:00 → Kolkata (UTC+5:30) date = 2024-03-15
+    # UTC date = 2024-03-14
+    before { freeze_to("2024-03-14 23:00:00") }
+
+    it "2024-03-15 IS_FUTURE with UTC (UTC date is 2024-03-14)" do
+      expect(eval_with("IS_FUTURE", "2024-03-15", data_type: "date", timezone: "UTC")).to be true
+    end
+
+    it "2024-03-15 is NOT IS_FUTURE with Asia/Kolkata (local date is already 2024-03-15 = today)" do
+      expect(eval_with("IS_FUTURE", "2024-03-15", data_type: "date", timezone: "Asia/Kolkata")).to be false
+    end
+  end
+
+  describe "timezone-aware IS_PAST (date type)" do
+    # UTC 2024-03-14 23:00:00 → Kolkata (UTC+5:30) date = 2024-03-15
+    # UTC date = 2024-03-14
+    before { freeze_to("2024-03-14 23:00:00") }
+
+    it "2024-03-14 IS_PAST with UTC (UTC date is 2024-03-14 = today, NOT past)" do
+      expect(eval_with("IS_PAST", "2024-03-14", data_type: "date", timezone: "UTC")).to be false
+    end
+
+    it "2024-03-14 IS_PAST with Asia/Kolkata (local date is 2024-03-15, so 2024-03-14 is past)" do
+      expect(eval_with("IS_PAST", "2024-03-14", data_type: "date", timezone: "Asia/Kolkata")).to be true
+    end
+  end
+
+  describe "timezone-aware IS_CURRENT_MONTH (date type)" do
+    # UTC 2024-03-31 23:00:00 → Kolkata (UTC+5:30) date = 2024-04-01 (April)
+    # UTC date = 2024-03-31 (March)
+    before { freeze_to("2024-03-31 23:00:00") }
+
+    it "2024-03-31 IS_CURRENT_MONTH with UTC (UTC month is March)" do
+      expect(eval_with("IS_CURRENT_MONTH", "2024-03-31", data_type: "date", timezone: "UTC")).to be true
+    end
+
+    it "2024-03-31 is NOT IS_CURRENT_MONTH with Asia/Kolkata (local month is April)" do
+      expect(eval_with("IS_CURRENT_MONTH", "2024-03-31", data_type: "date", timezone: "Asia/Kolkata")).to be false
+    end
+
+    it "2024-04-01 is NOT IS_CURRENT_MONTH with UTC (UTC month is March)" do
+      expect(eval_with("IS_CURRENT_MONTH", "2024-04-01", data_type: "date", timezone: "UTC")).to be false
+    end
+
+    it "2024-04-01 IS_CURRENT_MONTH with Asia/Kolkata (local month is April)" do
+      expect(eval_with("IS_CURRENT_MONTH", "2024-04-01", data_type: "date", timezone: "Asia/Kolkata")).to be true
+    end
+  end
+
+  describe "timezone-aware IS_PREVIOUS_MONTH (date type)" do
+    # UTC 2024-03-31 23:00:00 → Kolkata (UTC+5:30) date = 2024-04-01 (April)
+    # UTC date = 2024-03-31 (March), previous month = February
+    # Kolkata date = 2024-04-01 (April), previous month = March
+    before { freeze_to("2024-03-31 23:00:00") }
+
+    it "2024-02-15 IS_PREVIOUS_MONTH with UTC (previous month is February)" do
+      expect(eval_with("IS_PREVIOUS_MONTH", "2024-02-15", data_type: "date", timezone: "UTC")).to be true
+    end
+
+    it "2024-02-15 is NOT IS_PREVIOUS_MONTH with Asia/Kolkata (previous month is March)" do
+      expect(eval_with("IS_PREVIOUS_MONTH", "2024-02-15", data_type: "date", timezone: "Asia/Kolkata")).to be false
+    end
+
+    it "2024-03-15 is NOT IS_PREVIOUS_MONTH with UTC (previous month is February, not March)" do
+      expect(eval_with("IS_PREVIOUS_MONTH", "2024-03-15", data_type: "date", timezone: "UTC")).to be false
+    end
+
+    it "2024-03-15 IS_PREVIOUS_MONTH with Asia/Kolkata (previous month is March)" do
+      expect(eval_with("IS_PREVIOUS_MONTH", "2024-03-15", data_type: "date", timezone: "Asia/Kolkata")).to be true
+    end
+  end
+
+  describe "timezone does not affect datetime IS_FUTURE" do
+    # For datetime fields, UTC comparisons are used regardless of timezone
+    before { freeze_to("2024-03-15 12:00:00") }
+
+    it "datetime IS_FUTURE is the same with UTC and with a different timezone" do
+      future_val = "2024-03-15T12:00:00.001Z"
+      expect(eval_with("IS_FUTURE", future_val, data_type: "datetime", timezone: "UTC")).to be true
+      expect(eval_with("IS_FUTURE", future_val, data_type: "datetime", timezone: "Asia/Kolkata")).to be true
+    end
+
+    it "datetime IS_FUTURE past value is false with any timezone" do
+      past_val = "2024-03-15T11:59:59.999Z"
+      expect(eval_with("IS_FUTURE", past_val, data_type: "datetime", timezone: "UTC")).to be false
+      expect(eval_with("IS_FUTURE", past_val, data_type: "datetime", timezone: "Asia/Kolkata")).to be false
+    end
   end
 end
