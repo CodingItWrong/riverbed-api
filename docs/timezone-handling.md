@@ -145,14 +145,14 @@ def current_month_start_string(data_type)
   now = Time.now.in_time_zone(@timezone)
   if data_type == "datetime"
     # Compute UTC equivalent of local month start for datetime range comparison
-    ActiveSupport::TimeZone[@timezone].local(now.year, now.month, 1).utc.iso8601(3)
+    now.beginning_of_month.utc.iso8601(3)
   else
     format("%04d-%02d-01", now.year, now.month)
   end
 end
 ```
 
-`next_month_start_string` and `previous_month_start_string` follow the same pattern.
+`next_month_start_string` uses `now.next_month.beginning_of_month.utc.iso8601(3)` and `previous_month_start_string` uses `now.prev_month.beginning_of_month.utc.iso8601(3)` for the `datetime` path.
 
 All month-boundary methods use the client's local timezone for both `date` and `datetime` fields. For `datetime` fields, the local month start is converted to its UTC equivalent so it can be compared against UTC-stored datetime values.
 
