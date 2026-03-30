@@ -96,7 +96,7 @@ class ColumnsController < JsonapiController
     timezone = params[:timezone].presence || "UTC"
     unless valid_timezone?(timezone)
       render json: {errors: [{code: "422", title: "Invalid timezone",
-        detail: "timezone - is not a valid IANA timezone"}]},
+                              detail: "timezone - is not a valid IANA timezone"}]},
         status: :unprocessable_entity, content_type: jsonapi_content_type
       return
     end
