@@ -648,4 +648,64 @@ RSpec.describe CardConditionEvaluator do
       expect(eval_with("IS_FUTURE", past_val, data_type: "datetime", timezone: "Asia/Kolkata")).to be false
     end
   end
+
+  # ---------------------------------------------------------------------------
+  # Timezone-aware IS_CURRENT_MONTH (datetime type)
+  # Frozen UTC: 2024-03-31 23:00:00
+  # UTC month: March — UTC month start is "2024-03-01T00:00:00.000Z"
+  # Asia/Kolkata (UTC+5:30) month: April — Kolkata April start in UTC is "2024-03-31T18:30:00.000Z"
+  # ---------------------------------------------------------------------------
+
+  describe "timezone-aware IS_CURRENT_MONTH (datetime type)" do
+    before { freeze_to("2024-03-31 23:00:00") }
+
+    it "2024-04-01T00:00:00.000Z is NOT IS_CURRENT_MONTH with UTC (UTC month is March)" do
+      expect(eval_with("IS_CURRENT_MONTH", "2024-04-01T00:00:00.000Z", data_type: "datetime", timezone: "UTC")).to be false
+    end
+
+    it "2024-04-01T00:00:00.000Z IS_CURRENT_MONTH with Asia/Kolkata (Kolkata month is April)" do
+      expect(eval_with("IS_CURRENT_MONTH", "2024-04-01T00:00:00.000Z", data_type: "datetime", timezone: "Asia/Kolkata")).to be true
+    end
+
+    it "2024-03-31T18:30:00.000Z (April 1 00:00 IST) IS_CURRENT_MONTH with Asia/Kolkata" do
+      expect(eval_with("IS_CURRENT_MONTH", "2024-03-31T18:30:00.000Z", data_type: "datetime", timezone: "Asia/Kolkata")).to be true
+    end
+
+    it "2024-03-31T18:29:59.999Z (March 31 23:59 IST) is NOT IS_CURRENT_MONTH with Asia/Kolkata" do
+      expect(eval_with("IS_CURRENT_MONTH", "2024-03-31T18:29:59.999Z", data_type: "datetime", timezone: "Asia/Kolkata")).to be false
+    end
+
+    it "2024-03-31T23:00:00.000Z IS_CURRENT_MONTH with UTC (still March in UTC)" do
+      expect(eval_with("IS_CURRENT_MONTH", "2024-03-31T23:00:00.000Z", data_type: "datetime", timezone: "UTC")).to be true
+    end
+  end
+
+  # ---------------------------------------------------------------------------
+  # Timezone-aware IS_PREVIOUS_MONTH (datetime type)
+  # Frozen UTC: 2024-03-31 23:00:00
+  # UTC previous month: February
+  # Asia/Kolkata previous month: March (current month is April in Kolkata)
+  # Kolkata March start in UTC: "2024-02-29T18:30:00.000Z" (2024 is a leap year)
+  # Kolkata April start in UTC: "2024-03-31T18:30:00.000Z"
+  # ---------------------------------------------------------------------------
+
+  describe "timezone-aware IS_PREVIOUS_MONTH (datetime type)" do
+    before { freeze_to("2024-03-31 23:00:00") }
+
+    it "2024-02-15T12:00:00.000Z IS_PREVIOUS_MONTH with UTC (previous UTC month is February)" do
+      expect(eval_with("IS_PREVIOUS_MONTH", "2024-02-15T12:00:00.000Z", data_type: "datetime", timezone: "UTC")).to be true
+    end
+
+    it "2024-02-15T12:00:00.000Z is NOT IS_PREVIOUS_MONTH with Asia/Kolkata (previous Kolkata month is March)" do
+      expect(eval_with("IS_PREVIOUS_MONTH", "2024-02-15T12:00:00.000Z", data_type: "datetime", timezone: "Asia/Kolkata")).to be false
+    end
+
+    it "2024-03-15T12:00:00.000Z is NOT IS_PREVIOUS_MONTH with UTC (previous UTC month is February, not March)" do
+      expect(eval_with("IS_PREVIOUS_MONTH", "2024-03-15T12:00:00.000Z", data_type: "datetime", timezone: "UTC")).to be false
+    end
+
+    it "2024-03-15T12:00:00.000Z IS_PREVIOUS_MONTH with Asia/Kolkata (previous Kolkata month is March)" do
+      expect(eval_with("IS_PREVIOUS_MONTH", "2024-03-15T12:00:00.000Z", data_type: "datetime", timezone: "Asia/Kolkata")).to be true
+    end
+  end
 end

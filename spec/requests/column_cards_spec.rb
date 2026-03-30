@@ -204,5 +204,52 @@ RSpec.describe "GET /columns/:id/cards" do
         end
       end
     end
+
+    context "timezone parameter with datetime field" do
+      let!(:datetime_field) { FactoryBot.create(:element, :field, board:, user:, data_type: :datetime) }
+
+      before do
+        column.update!(card_inclusion_conditions: [
+          {"field" => datetime_field.id.to_s, "query" => "IS_CURRENT_MONTH"}
+        ])
+        # Freeze UTC to 2024-03-31 23:00:00
+        # UTC current month: March (boundaries "2024-03-01T00:00:00.000Z" to "2024-04-01T00:00:00.000Z")
+        # Kolkata (UTC+5:30) current month: April
+        # Kolkata April start in UTC: "2024-03-31T18:30:00.000Z"
+        frozen = Time.parse("2024-03-31 23:00:00 UTC")
+        allow(Time).to receive(:now).and_return(frozen)
+      end
+
+      # "2024-04-01T00:00:00.000Z" = April 1 00:00 UTC = April 1 05:30 IST (Kolkata April)
+      let!(:april_utc_card) do
+        FactoryBot.create(:card, board:, user:, field_values: {datetime_field.id.to_s => "2024-04-01T00:00:00.000Z"})
+      end
+      # "2024-03-31T23:00:00.000Z" = March 31 23:00 UTC = April 1 04:30 IST (Kolkata April)
+      let!(:march_utc_card) do
+        FactoryBot.create(:card, board:, user:, field_values: {datetime_field.id.to_s => "2024-03-31T23:00:00.000Z"})
+      end
+
+      context "without timezone param (defaults to UTC)" do
+        it "uses UTC month boundaries: March UTC cards pass, April UTC card does not" do
+          get "/columns/#{column.id}/cards", headers: headers
+
+          expect(response.status).to eq(200)
+          ids = response_body["data"].map { |c| c["id"] }
+          expect(ids).to include(march_utc_card.id.to_s)
+          expect(ids).not_to include(april_utc_card.id.to_s)
+        end
+      end
+
+      context "with timezone=Asia/Kolkata (UTC+5:30)" do
+        it "uses Kolkata April boundaries: both cards fall in Kolkata April" do
+          get "/columns/#{column.id}/cards?timezone=Asia%2FKolkata", headers: headers
+
+          expect(response.status).to eq(200)
+          ids = response_body["data"].map { |c| c["id"] }
+          expect(ids).to include(april_utc_card.id.to_s)
+          expect(ids).to include(march_utc_card.id.to_s)
+        end
+      end
+    end
   end
 end

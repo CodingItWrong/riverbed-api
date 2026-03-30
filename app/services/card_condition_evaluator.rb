@@ -124,62 +124,30 @@ class CardConditionEvaluator
   end
 
   def current_month_start_string(data_type)
+    now = Time.now.in_time_zone(@timezone)
     if data_type == "datetime"
-      now = Time.now.utc
-      date_str = format("%04d-%02d-01", now.year, now.month)
-      "#{date_str}T00:00:00.000Z"
+      ActiveSupport::TimeZone[@timezone].local(now.year, now.month, 1).utc.iso8601(3)
     else
-      now = Time.now.in_time_zone(@timezone)
       format("%04d-%02d-01", now.year, now.month)
     end
   end
 
   def next_month_start_string(data_type)
+    now = Time.now.in_time_zone(@timezone)
+    year, month = now.month == 12 ? [now.year + 1, 1] : [now.year, now.month + 1]
     if data_type == "datetime"
-      now = Time.now.utc
-      if now.month == 12
-        year = now.year + 1
-        month = 1
-      else
-        year = now.year
-        month = now.month + 1
-      end
-      date_str = format("%04d-%02d-01", year, month)
-      "#{date_str}T00:00:00.000Z"
+      ActiveSupport::TimeZone[@timezone].local(year, month, 1).utc.iso8601(3)
     else
-      now = Time.now.in_time_zone(@timezone)
-      if now.month == 12
-        year = now.year + 1
-        month = 1
-      else
-        year = now.year
-        month = now.month + 1
-      end
       format("%04d-%02d-01", year, month)
     end
   end
 
   def previous_month_start_string(data_type)
+    now = Time.now.in_time_zone(@timezone)
+    year, month = now.month == 1 ? [now.year - 1, 12] : [now.year, now.month - 1]
     if data_type == "datetime"
-      now = Time.now.utc
-      if now.month == 1
-        year = now.year - 1
-        month = 12
-      else
-        year = now.year
-        month = now.month - 1
-      end
-      date_str = format("%04d-%02d-01", year, month)
-      "#{date_str}T00:00:00.000Z"
+      ActiveSupport::TimeZone[@timezone].local(year, month, 1).utc.iso8601(3)
     else
-      now = Time.now.in_time_zone(@timezone)
-      if now.month == 1
-        year = now.year - 1
-        month = 12
-      else
-        year = now.year
-        month = now.month - 1
-      end
       format("%04d-%02d-01", year, month)
     end
   end

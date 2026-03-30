@@ -10,7 +10,11 @@ Clients can be located anywhere in the world. If a user in UTC−8 opens their a
 
 ## Affected Filter Conditions
 
-The following query operators are time-zone-sensitive when applied to **`date`** fields, because a `date` field stores only a calendar date (`YYYY-MM-DD`) with no time component. "Today" on a `date` field is inherently a local concept.
+The following query operators are time-zone-sensitive for **both `date` and `datetime`** fields.
+
+### `date` fields
+
+`date` fields store only a calendar date (`YYYY-MM-DD`) with no time component. "Today" and "current month" are inherently local concepts, so all temporal filters depend on the client's timezone.
 
 | Query | Why timezone matters |
 |---|---|
@@ -22,9 +26,28 @@ The following query operators are time-zone-sensitive when applied to **`date`**
 | `IS_PAST` | "Past" means before today's local date |
 | `IS_NOT_PAST` | Inverse of `IS_PAST` |
 
-For **`datetime`** fields, values are stored as UTC ISO 8601 strings (`2024-03-15T14:30:00.000Z`). Comparisons for `IS_FUTURE` and `IS_PAST` compare one UTC moment against another, so timezone does not change the result. Month-boundary comparisons (`IS_CURRENT_MONTH`, `IS_PREVIOUS_MONTH`) for `datetime` fields use UTC month boundaries, which is consistent with UTC-stored values and acceptable given that month-boundary edge cases for `datetime` are rare in practice.
+### `datetime` fields
 
-**Summary:** timezone support is required for all temporal queries on `date` fields, and has no effect on `datetime` fields.
+`datetime` fields store values as UTC ISO 8601 strings (`2024-03-15T14:30:00.000Z`).
+
+**Month-boundary filters are affected by timezone.** Consider a client in UTC+5:30 when UTC is 2024-03-31 23:00. The client's local time is 2024-04-01 04:30 — already in April. A `datetime` value of `"2024-04-01T00:00:00.000Z"` is past the UTC month boundary but is within the client's current month (April in Kolkata). Using UTC boundaries would incorrectly exclude it.
+
+| Query | Effect of timezone |
+|---|---|
+| `IS_CURRENT_MONTH` | Month boundaries computed from the client's local month start, converted to UTC for comparison |
+| `IS_NOT_CURRENT_MONTH` | Inverse of `IS_CURRENT_MONTH` |
+| `IS_PREVIOUS_MONTH` | Previous month boundaries computed from the client's local timezone |
+
+**Point-in-time filters are timezone-invariant.** Whether a UTC moment is in the past or future is the same regardless of what timezone the client is in.
+
+| Query | Effect of timezone |
+|---|---|
+| `IS_FUTURE` | No effect — compares UTC instant against UTC now |
+| `IS_NOT_FUTURE` | No effect |
+| `IS_PAST` | No effect — compares UTC instant against UTC now |
+| `IS_NOT_PAST` | No effect |
+
+**Summary:** timezone affects all temporal queries on `date` fields, and affects month-boundary queries (`IS_CURRENT_MONTH`, `IS_NOT_CURRENT_MONTH`, `IS_PREVIOUS_MONTH`) on `datetime` fields.
 
 ---
 
@@ -107,24 +130,23 @@ def initialize(conditions, elements_by_id, timezone: "UTC")
 end
 ```
 
-Update the private helper methods that compute "now" for `date` fields to use the client's local time:
+Update the private helper methods to use the client's timezone:
 
 ```ruby
 def now_string(data_type)
   if data_type == "datetime"
-    Time.now.utc.iso8601(3)
+    Time.now.utc.iso8601(3)   # IS_FUTURE/IS_PAST: moment comparison, timezone-invariant
   else
     Time.now.in_time_zone(@timezone).strftime("%Y-%m-%d")
   end
 end
 
 def current_month_start_string(data_type)
+  now = Time.now.in_time_zone(@timezone)
   if data_type == "datetime"
-    now = Time.now.utc
-    date_str = format("%04d-%02d-01", now.year, now.month)
-    "#{date_str}T00:00:00.000Z"
+    # Compute UTC equivalent of local month start for datetime range comparison
+    ActiveSupport::TimeZone[@timezone].local(now.year, now.month, 1).utc.iso8601(3)
   else
-    now = Time.now.in_time_zone(@timezone)
     format("%04d-%02d-01", now.year, now.month)
   end
 end
@@ -132,7 +154,9 @@ end
 
 `next_month_start_string` and `previous_month_start_string` follow the same pattern.
 
-`datetime` paths are unchanged; only `date` paths switch from `Time.now.utc` to `Time.now.in_time_zone(@timezone)`.
+All month-boundary methods use the client's local timezone for both `date` and `datetime` fields. For `datetime` fields, the local month start is converted to its UTC equivalent so it can be compared against UTC-stored datetime values.
+
+`IS_FUTURE`/`IS_PAST` on `datetime` fields remain UTC-based since those are moment-in-time comparisons.
 
 ### `ColumnsController#cards` changes
 
@@ -185,6 +209,6 @@ end
 
 IANA timezone identifiers (e.g., `America/New_York`, `Europe/London`) are the industry standard used by iOS, Android, and most modern clients. Rails' `ActiveSupport::TimeZone` supports IANA names via the underlying `tzinfo` gem, so `Time.now.in_time_zone("America/New_York")` works without any mapping.
 
-### `datetime` field timezone invariance
+### `IS_FUTURE` / `IS_PAST` on `datetime` fields remain UTC-based
 
-`datetime` field values are stored as UTC ISO 8601 strings. `IS_FUTURE` and `IS_PAST` compare those UTC strings against the current UTC moment—the result is the same regardless of what timezone the client is in (a moment in time either has passed or has not). Month comparisons for `datetime` fields (`IS_CURRENT_MONTH`, `IS_PREVIOUS_MONTH`) use UTC month boundaries, which is consistent with the UTC-stored values and is a reasonable approximation. A future enhancement could adjust month boundaries for `datetime` fields to the client timezone as well, but this is a rare edge case.
+`datetime` field values are stored as UTC ISO 8601 strings. `IS_FUTURE` and `IS_PAST` compare those UTC strings against the current UTC moment — the result is the same regardless of what timezone the client is in (a moment in time either has passed or has not, independent of timezone). Month-boundary filters (`IS_CURRENT_MONTH`, `IS_PREVIOUS_MONTH`) do depend on timezone because "current month" is a calendar concept that varies by locale.
