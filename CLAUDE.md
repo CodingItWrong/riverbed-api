@@ -45,62 +45,71 @@ bin/serve
 ```bash
 # Generate model
 rails generate model widget [fields]
-
-# Generate JSON:API resource
-rails generate jsonapi:resource widget
-
-# Generate JSON:API controller
-rails generate jsonapi:controller widget
 ```
+
+JSON:API serialization is hand-written (see Architecture below) — there are no resource or
+controller generators for it. Add a new endpoint by writing a controller that inherits from
+`JsonapiController`.
 
 ## Architecture
 
 ### JSON:API Pattern
 
-The API follows the JSON:API specification using the `jsonapi-resources` gem. The architecture has three layers:
+The API follows the JSON:API specification, **hand-written — there is no JSON:API gem**. The
+project previously used `jsonapi-resources` and was migrated off it; there is no
+`app/resources/` directory and no `jsonapi-resources` in the Gemfile. The architecture has
+two layers:
 
-1. **Controllers** (`app/controllers/*_controller.rb`): Inherit from `JsonapiResourcesController`, which includes `JSONAPI::ActsAsResourceController`. Most controllers only need to call `doorkeeper_authorize!` for authentication.
+1. **Controllers** (`app/controllers/*_controller.rb`): Inherit from `JsonapiController`
+   (`app/controllers/jsonapi_controller.rb`), which provides the shared JSON:API plumbing:
+   - `jsonapi_content_type` — the `application/vnd.api+json` content type, passed explicitly
+     to every `render`
+   - `validate_jsonapi_request(type, require_id:, expected_id:)` — parses the body and
+     returns `:error` after rendering a 400 for invalid JSON, a missing `data` key, a
+     missing/wrong `type`, or an ID mismatch. Returns `{attributes:, relationships:}` on
+     success.
+   - `render_not_found` — the 404 body used for both missing and unowned records
+   - `render_validation_errors(record)` — maps validation errors to 422 JSON:API error objects
 
-2. **Resources** (`app/resources/*_resource.rb`): Inherit from `ApplicationResource` (which extends `JSONAPI::Resource`). Resources define:
-   - Exposed attributes (with snake_case → kebab-case transformation)
-   - Delegated attributes (e.g., `options` delegates to `board_options`)
-   - Relationships to other resources
-   - Creatable/updatable field restrictions
-   - Scoping logic (e.g., `records` method filters by current user)
-   - Lifecycle hooks (`before_create`, `after_create`, etc.)
+   Each controller then does its own scoping, attribute mapping, and serialization: a private
+   `serialize_<resource>` method builds the resource object (`type`, `id`, `attributes`) with
+   literal kebab-case attribute keys. Every action starts with `doorkeeper_authorize!`.
 
-3. **Models** (`app/models/*.rb`): Standard ActiveRecord models with associations and validations.
+2. **Models** (`app/models/*.rb`): Standard ActiveRecord models with associations and
+   validations.
+
+Because serialization is per-controller, **the envelope is not automatically consistent across
+resources** — when changing shared behavior, check each controller and its request spec.
 
 ### Authentication & Authorization
 
 - **OAuth2**: Implemented via Doorkeeper gem (`use_doorkeeper` in routes)
 - **Token endpoint**: `POST /oauth/token` (non-JSON:API endpoint using `application/json`)
 - **Authorization**: All JSON:API endpoints require Bearer token except user signup
-- **User scoping**: Resources implement `self.records` method to scope queries to `current_user`
-- **Current user access**: Available in resources via `current_user` method (from context)
+- **User scoping**: Controllers query through the association (`current_user.boards.find_by(id:)`), never `Model.find`
+- **Current user access**: `ApplicationController#current_user` resolves `doorkeeper_token.resource_owner_id`
+- **Unowned records return 404, not 403**, to avoid ID enumeration
 
 ### Key Architectural Patterns
 
-**Attribute Delegation**: Resources can delegate to differently named model attributes:
+**Attribute Mapping**: Wire attribute names differ from column names and are mapped by hand in
+each controller's serializer and writer, e.g. in `BoardsController`:
 ```ruby
-attribute :options, delegate: :board_options
-attribute :icon_extended, delegate: :icon
+"options" => board.board_options
+board.icon = attributes["icon-extended"] || attributes["icon"]
 ```
+`boards` also exposes a computed `icon` that returns the stored icon only when it is one of
+`ORIGINAL_ICONS`, alongside the raw `icon-extended`.
 
-**User Association**: All resources automatically associate with current user:
-```ruby
-before_create do
-  _model.user = current_user
-end
-```
+**Partial Updates**: Update actions assign an attribute only when its key is present
+(`if attributes.key?("name")`), so omitted keys are left untouched.
 
-**Field Restrictions**: Remove user field from creatable/updatable fields to prevent user tampering:
-```ruby
-def self.creatable_fields(_context) = super - [:user]
-def self.updatable_fields(_context) = super - [:user]
-```
+**User Association**: Records are built through the current user's association
+(`current_user.boards.new(...)`), and only an explicit attribute allowlist is read from the
+payload — a client-supplied user is simply never consulted.
 
-**Side Effects**: Use `after_create` hooks for creating related default data (e.g., boards create default column and card).
+**Side Effects**: Written inline in the create action — e.g. `BoardsController#create` creates
+a default `"All Cards"` column and an empty card after the board saves.
 
 ### Data Model
 
@@ -145,16 +154,10 @@ Two endpoints use standard JSON format:
 
 ## Migration Status
 
-The project is actively migrating JSON:API endpoints. See [docs/API_ENDPOINT_MIGRATION_PLAN.md](docs/API_ENDPOINT_MIGRATION_PLAN.md) for progress.
-
-Completed:
-- Boards (4 endpoints)
-
-Remaining:
-- Users (4 endpoints)
-- Columns (4 endpoints)
-- Elements (4 endpoints)
-- Cards (5 endpoints)
+The migration off `jsonapi-resources` to hand-written controllers is **complete** — all 21
+JSON:API endpoints (Boards 4, Columns 4, Elements 4, Users 4, Cards 5). See
+[docs/API_ENDPOINT_MIGRATION_PLAN.md](docs/API_ENDPOINT_MIGRATION_PLAN.md) for the per-endpoint
+record and the test-coverage checklist it established, which still applies to new endpoints.
 
 ## Technology Stack
 
@@ -165,7 +168,7 @@ Remaining:
   - `doorkeeper` - OAuth2 provider
   - `bcrypt` - Password hashing
   - `rack-cors` - CORS handling
-  - `httparty` - Webhook HTTP client
+  - `httparty` - Webhook HTTP client (`lib/webhook_client.rb`, used by `POST /shares`)
   - `standard` - Ruby linting/formatting
   - `rspec-rails` - Testing framework
   - `factory_bot_rails` - Test data factories
