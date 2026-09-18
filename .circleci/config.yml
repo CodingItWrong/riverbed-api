@@ -3,7 +3,7 @@ jobs:
   build:
     docker:
       # specify the version you desire here
-      - image: cimg/ruby:4.0.6
+      - image: cimg/ruby:4.0.7
         environment:
           PGHOST: 127.0.0.1
           PGUSER: rails
