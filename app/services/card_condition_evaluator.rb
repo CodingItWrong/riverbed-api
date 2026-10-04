@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
 class CardConditionEvaluator
-  TEMPORAL_TYPES = %w[date datetime].freeze
-
   def initialize(conditions, elements_by_id, timezone: "UTC")
     @conditions = conditions
     @elements_by_id = elements_by_id
@@ -70,7 +68,7 @@ class CardConditionEvaluator
   end
 
   def temporal_guard(data_type)
-    return false unless TEMPORAL_TYPES.include?(data_type)
+    return false unless CardConditionTime.temporal?(data_type)
 
     yield
   end
@@ -78,8 +76,8 @@ class CardConditionEvaluator
   def is_current_month?(field_value, data_type)
     return false if field_value.nil? || field_value == ""
 
-    month_start = current_month_start_string(data_type)
-    next_start = next_month_start_string(data_type)
+    month_start = CardConditionTime.current_month_start_string(data_type, @timezone)
+    next_start = CardConditionTime.next_month_start_string(data_type, @timezone)
 
     field_value >= month_start && field_value < next_start
   end
@@ -87,68 +85,23 @@ class CardConditionEvaluator
   def is_previous_month?(field_value, data_type)
     return false if field_value.nil? || field_value == ""
 
-    prev_start = previous_month_start_string(data_type)
-    curr_start = current_month_start_string(data_type)
+    prev_start = CardConditionTime.previous_month_start_string(data_type, @timezone)
+    curr_start = CardConditionTime.current_month_start_string(data_type, @timezone)
 
     field_value >= prev_start && field_value < curr_start
   end
 
   def is_future?(field_value, data_type)
     return false if field_value.nil? || field_value == ""
-    return false unless valid_temporal_string?(field_value, data_type)
+    return false unless CardConditionTime.valid_temporal_string?(field_value, data_type)
 
-    field_value > now_string(data_type)
+    field_value > CardConditionTime.now_string(data_type, @timezone)
   end
 
   def is_past?(field_value, data_type)
     return false if field_value.nil? || field_value == ""
-    return false unless valid_temporal_string?(field_value, data_type)
+    return false unless CardConditionTime.valid_temporal_string?(field_value, data_type)
 
-    field_value < now_string(data_type)
-  end
-
-  def valid_temporal_string?(value, data_type)
-    if data_type == "datetime"
-      value.match?(/\A\d{4}-\d{2}-\d{2}T/)
-    else
-      value.match?(/\A\d{4}-\d{2}-\d{2}\z/)
-    end
-  end
-
-  def now_string(data_type)
-    if data_type == "datetime"
-      Time.now.utc.iso8601(3)
-    else
-      Time.now.in_time_zone(@timezone).strftime("%Y-%m-%d")
-    end
-  end
-
-  def current_month_start_string(data_type)
-    now = Time.now.in_time_zone(@timezone)
-    if data_type == "datetime"
-      now.beginning_of_month.utc.iso8601(3)
-    else
-      format("%04d-%02d-01", now.year, now.month)
-    end
-  end
-
-  def next_month_start_string(data_type)
-    now = Time.now.in_time_zone(@timezone)
-    nxt = now.next_month
-    if data_type == "datetime"
-      nxt.beginning_of_month.utc.iso8601(3)
-    else
-      format("%04d-%02d-01", nxt.year, nxt.month)
-    end
-  end
-
-  def previous_month_start_string(data_type)
-    now = Time.now.in_time_zone(@timezone)
-    prv = now.prev_month
-    if data_type == "datetime"
-      prv.beginning_of_month.utc.iso8601(3)
-    else
-      format("%04d-%02d-01", prv.year, prv.month)
-    end
+    field_value < CardConditionTime.now_string(data_type, @timezone)
   end
 end
