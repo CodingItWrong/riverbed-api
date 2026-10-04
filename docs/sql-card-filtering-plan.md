@@ -134,7 +134,7 @@ If anything unexpected turns up, such as numbers in a text field or non-string o
 | File | Change |
 |---|---|
 | `app/services/card_condition_time.rb` (new) | Move `now_string`, `current_month_start_string`, `next_month_start_string`, `previous_month_start_string` and the format patterns out of the evaluator. Both implementations use it, so their boundaries can't drift apart. |
-| `app/services/card_condition_evaluator.rb` | Use `CardConditionTime`. No behavior change. Keep it as the reference implementation and the fallback. |
+| `app/services/card_condition_evaluator.rb` | Use `CardConditionTime`. No behavior change. It stays only during rollout, as the reference for the parity specs and as the fallback; it's deleted in the cleanup step. |
 | `app/services/card_condition_query.rb` (new) | `initialize(conditions, elements_by_id, timezone:)` and `apply(scope)`, building one predicate per condition as described above. |
 | `app/controllers/columns_controller.rb` | `#cards` uses `CardConditionQuery` behind a switch (see Rollout). |
 
@@ -178,7 +178,12 @@ Seed a local board with ~10k cards shaped like board 9, plus a column with 2–3
 1. **Switch:** `ENV["CARD_FILTERING"]` set to `"ruby"` (default) or `"sql"`, read in `#cards`. Switching back is just an env change, with no deploy.
 2. **Shadow mode (temporary):** a third value, `"compare"`, runs both, returns the Ruby result, and logs a warning when the ID sets differ. Log the column ID, the conditions and the differing card IDs, but no field values, since they're user content. This doubles the cost while it's on, so enable it for a day or two of normal use, check the logs, then turn it off.
 3. **Switch to `"sql"`**, then re-measure board 9's column requests in production.
-4. **Clean up:** after a quiet period, remove the switch and the compare mode. Keep `CardConditionEvaluator`, since the parity specs use it as the reference. Delete it only if the parity specs move to fixed expected results instead.
+4. **Clean up: retire the Ruby implementation.** After a quiet period on `"sql"`:
+   - Convert the parity spec to fixed expected results. Each case asserts whether the SQL query includes the card, using the result the Ruby evaluator produced, so no case is lost.
+   - Delete `CardConditionEvaluator`, the switch and the compare mode.
+   - Keep the randomized check's seeds and convert its useful cases into fixed examples, since it can no longer compare against Ruby.
+
+   This leaves one implementation. Keeping both long-term would mean every new or changed condition type has to be written twice and kept in sync, and the parity spec only catches drift for cases someone wrote a test for.
 
 ---
 
@@ -191,6 +196,8 @@ Seed a local board with ~10k cards shaped like board 9, plus a column with 2–3
 | Case-insensitive `CONTAINS` differs for non-ASCII text (Postgres `lower()` follows the database locale, Ruby `downcase` is full Unicode) | Parity cases with accented and other non-ASCII letters; check `lc_collate`. If they differ, accept it for ASCII-only or document the difference. |
 | Wildcards in search text | `strpos` instead of `LIKE`, so there's nothing to escape |
 | Time boundaries drift between the implementations | Shared `CardConditionTime` module; boundaries are computed in Ruby and bound as parameters |
+| Two implementations drift apart over time | The Ruby evaluator is deleted after rollout, with its spec cases kept as fixed expectations for the SQL version |
+| New field types store values that aren't text (arrays, JSON numbers) | Their filters would silently not match rather than error. Any new field type needs deliberate SQL handling and test cases. |
 | SQL injection through field IDs or values | Bind parameters only; field IDs are also checked against `elements_by_id` or a pattern |
 | Non-string values (geolocation objects, possibly numbers) | `is_str` guard reproduces Ruby; data audit first; the 500s from `CONTAINS` and date conditions on objects become "no match", called out in the PR |
 
