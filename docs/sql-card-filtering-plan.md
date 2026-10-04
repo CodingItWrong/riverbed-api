@@ -105,7 +105,7 @@ Ruby compares the raw JSON value, while SQL's `->>` turns everything into text. 
   - SQL with the `is_str` guard: the same falses for empty and equals. `CONTAINS` and the date conditions return false instead of raising.
 - **Numbers and booleans:** the web client stores numbers as strings, but other clients (iOS) or old data might not. Ruby's `5 == "5"` is false, while SQL's `'5' = '5'` would be true without the guard. The `is_str` guard keeps Ruby's behavior.
 
-The only intended behavior change is that those 500s become "no match". Call it out in the PR.
+The only intended behavior change is that those 500s become a defined result: the value is treated as not matching the condition, so `CONTAINS` or `IS_CURRENT_MONTH` excludes the card, and negated conditions like `DOES_NOT_CONTAIN` or `IS_NOT_CURRENT_MONTH` include it. The same applies to a `CONTAINS` condition whose search value is missing or not a string. Call it out in the PR.
 
 Before implementing, check production (read-only):
 
@@ -199,7 +199,7 @@ Seed a local board with ~10k cards shaped like board 9, plus a column with 2–3
 | Two implementations drift apart over time | The Ruby evaluator is deleted after rollout, with its spec cases kept as fixed expectations for the SQL version |
 | New field types store values that aren't text (arrays, JSON numbers) | Their filters would silently not match rather than error. Any new field type needs deliberate SQL handling and test cases. |
 | SQL injection through field IDs or values | Bind parameters only; field IDs are also checked against `elements_by_id` or a pattern |
-| Non-string values (geolocation objects, possibly numbers) | `is_str` guard reproduces Ruby; data audit first; the 500s from `CONTAINS` and date conditions on objects become "no match", called out in the PR |
+| Non-string values (geolocation objects, possibly numbers) | `is_str` guard reproduces Ruby; data audit first; the 500s from `CONTAINS` and date conditions on objects become a defined result (treated as not matching), called out in the PR |
 
 ---
 
