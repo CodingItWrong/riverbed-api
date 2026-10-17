@@ -101,11 +101,7 @@ class ColumnsController < JsonapiController
       return
     end
 
-    elements_by_id = column.board.elements.index_by { |e| e.id.to_s }
-    conditions = column.card_inclusion_conditions
-    evaluator = CardConditionEvaluator.new(conditions, elements_by_id, timezone: timezone)
-
-    filtered = column.board.cards.order(:id).select { |card| evaluator.passes?(card) }
+    filtered = filter_cards(column, timezone)
 
     render json: {data: filtered.map { |card| serialize_card(card) }},
       content_type: jsonapi_content_type
@@ -120,6 +116,54 @@ class ColumnsController < JsonapiController
   end
 
   private
+
+  # CARD_FILTERING chooses how column conditions are applied during the move
+  # from Ruby to SQL (see docs/sql-card-filtering-plan.md):
+  # - "ruby" (default): load every card on the board and filter in Ruby
+  # - "sql": filter in the database
+  # - "compare": filter both ways, log any difference, and return the Ruby result
+  def filter_cards(column, timezone)
+    elements_by_id = column.board.elements.index_by { |e| e.id.to_s }
+    conditions = column.card_inclusion_conditions
+    cards = column.board.cards
+
+    case ENV.fetch("CARD_FILTERING", "ruby")
+    when "sql"
+      sql_filtered_cards(cards, conditions, elements_by_id, timezone)
+    when "compare"
+      ruby_cards = ruby_filtered_cards(cards, conditions, elements_by_id, timezone)
+      compare_card_filtering(column, ruby_cards) do
+        sql_filtered_cards(cards, conditions, elements_by_id, timezone)
+      end
+      ruby_cards
+    else
+      ruby_filtered_cards(cards, conditions, elements_by_id, timezone)
+    end
+  end
+
+  def ruby_filtered_cards(cards, conditions, elements_by_id, timezone)
+    evaluator = CardConditionEvaluator.new(conditions, elements_by_id, timezone: timezone)
+    cards.order(:id).select { |card| evaluator.passes?(card) }
+  end
+
+  def sql_filtered_cards(cards, conditions, elements_by_id, timezone)
+    CardConditionQuery.new(conditions, elements_by_id, timezone: timezone).apply(cards).order(:id).to_a
+  end
+
+  # Logs card IDs and conditions only, not field values, since they're user content
+  def compare_card_filtering(column, ruby_cards)
+    ruby_ids = ruby_cards.map(&:id)
+    sql_ids = yield.map(&:id)
+    return if sql_ids == ruby_ids
+
+    Rails.logger.warn(
+      "Card filtering mismatch for column #{column.id}: " \
+      "only in Ruby #{(ruby_ids - sql_ids).inspect}, only in SQL #{(sql_ids - ruby_ids).inspect}, " \
+      "conditions #{column.card_inclusion_conditions.to_json}"
+    )
+  rescue => e
+    Rails.logger.error("Card filtering comparison failed for column #{column.id}: #{e.class}: #{e.message}")
+  end
 
   def valid_timezone?(tz_name)
     ActiveSupport::TimeZone.find_tzinfo(tz_name)
